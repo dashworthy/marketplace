@@ -21,7 +21,7 @@ Signal produces one artifact — `brief.md` — and stops. There is no review st
 
 Three non-negotiables:
 
-1. **Never read an artifact produced by a dispatched subagent.** Not `brief.md` §7, not §8. You route paths and act on RETURN blocks. Your context stays small and decision-grade — that is the entire point of the architecture, and it is worth more than your curiosity about any single file.
+1. **Never read an artifact produced by a dispatched subagent.** Not `brief.md` §7, not §8. You route paths and act on RETURN blocks. Files **written in the main thread are yours to read** — `00-request.md`, and `open-threads.md`, which stage 1 writes in your own session. That is not an exception carved into this rule; it is what the rule has always said. The prohibition is on artifacts a *dispatched subagent* authored. Your context stays small and decision-grade — that is the entire point of the architecture, and it is worth more than your curiosity about any single file.
 2. **Stage 1 is yours.** It is interactive, so it runs in the main thread and you write `brief.md` §1–§6 yourself. **This is the one exception, and it is not a licence to read the rest.** Writing sections from a conversation you were part of is not the same act as reading a file a subagent authored — and §7 and §8, which stage 2 appends to that same file, remain closed to you. Handing content *down* to a subagent — as you do when you dispatch `expanding-scope` with the requirements inline — is likewise not a violation: the rule governs what you read *back*.
 3. **Signal stops at the brief.** No design, no plan, no build, no "and here's how I'd implement it".
 
@@ -73,8 +73,9 @@ Run artifacts live at `.signal/runs/<YYYY-MM-DD>-<slug>/` in the **user's** proj
 | What is on disk | What you do |
 |---|---|
 | No `brief.md`, and `00-request.md` records a trivial exit | The request was already judged trivial and no brief was written. Say so, quote the recorded reason, and ask whether they want it interrogated properly this time — do not silently re-run the same judgement. |
-| No `brief.md` | Stage 1, from the top. The previous run did not get as far as meeting the advancement gate — stage 1 writes as soon as it does — so there was nothing to save and the questions start again. |
-| `brief.md` exists | **Ask** the user: re-run **stage 2** against it, or start over at **stage 1**? Starting over at stage 1 rewrites the file from line 1 and discards any §7–§8 a previous run left, because that body was ordered from requirements about to be replaced. Stage 2 then appends a fresh one. |
+| No `brief.md`, no `open-threads.md` | Stage 1, from the top. Nothing was learned before the run was abandoned, so the questions start again. |
+| No `brief.md`, but `open-threads.md` exists | Stage 1, **warm**. The advancement gate was never met, but the work survived. Hand stage 1 the run directory as usual; its `## Returning Sessions` rules take over — it opens by offering the threads, honors the coverage table, and does not re-ask a dimension already recorded as `filled`. |
+| `brief.md` exists | **Ask** the user: re-run **stage 2** against it, or start over at **stage 1**? Starting over at stage 1 rewrites the file from line 1 and discards any §7–§8 a previous run left, because that body was ordered from requirements about to be replaced. Starting over is still warm: `open-threads.md` survives a stage 1 restart, so the coverage table and the open threads carry across rather than being re-earned. Stage 2 then appends a fresh one. |
 
 Read `00-request.md` freely — you wrote it. The prohibition is on artifacts a subagent authored.
 
@@ -88,6 +89,7 @@ Layout:
 
 ```
 00-request.md            the raw request, verbatim (written by the conductor)
+open-threads.md          working state — coverage table and loose ends (stage 1, main thread)
 brief.md                 THE deliverable — §1–§6 by stage 1, §7–§8 by stage 2
 ```
 
@@ -116,7 +118,7 @@ digraph signal {
     "Run directory already exists?" -> "Write 00-request.md" [label="no — create it"];
     "Run directory already exists?" -> "brief.md on disk?" [label="yes, resume"];
     "Run directory already exists?" -> "Write 00-request.md" [label="yes, start fresh under <slug>-2"];
-    "brief.md on disk?" -> "Stage 1 · INTERROGATE (main thread)" [label="absent"];
+    "brief.md on disk?" -> "Stage 1 · INTERROGATE (main thread)" [label="absent — warm if open-threads.md exists"];
     "brief.md on disk?" -> "Ask: re-run stage 2, or start over at stage 1?" [label="present"];
     "Ask: re-run stage 2, or start over at stage 1?" -> "Stage 2 · SEQUENCE (dispatched) — append §7–§8" [label="re-run stage 2"];
     "Ask: re-run stage 2, or start over at stage 1?" -> "Stage 1 · INTERROGATE (main thread)" [label="start over at stage 1"];
@@ -127,7 +129,7 @@ digraph signal {
     "Dispatch expanding-scope (requirements inline)" -> "User adjudicates every candidate" [label="OK"];
     "Dispatch expanding-scope (requirements inline)" -> "Rewrite brief.md §1–§6 — dispositions, or why there were none" [label="BLOCKED / malformed twice — degrade; still rewrite, §5 note must go"];
     "Dispatch expanding-scope (requirements inline)" -> "Rewrite brief.md §1–§6 — dispositions, or why there were none" [label="OK, no candidates found"];
-    "User adjudicates every candidate" -> "Rewrite brief.md §1–§6 — dispositions, or why there were none" [label="every candidate IN-SCOPE or NON-GOAL"];
+    "User adjudicates every candidate" -> "Rewrite brief.md §1–§6 — dispositions, or why there were none" [label="every candidate IN-SCOPE, NON-GOAL or DEFER"];
     "Rewrite brief.md §1–§6 — dispositions, or why there were none" -> "Stage 2 · SEQUENCE (dispatched) — append §7–§8";
     "Stage 2 · SEQUENCE (dispatched) — append §7–§8" -> "Release brief.md — signal stops" [label="OK"];
     "Stage 2 · SEQUENCE (dispatched) — append §7–§8" -> "Halt and escalate — no brief released" [label="BLOCKED"];
@@ -184,8 +186,9 @@ After stage 2 returns `OK` and the line count matches, release:
 
 1. **Confirm the file is actually there** — `test -f <path>`, or an equivalent existence check. Nothing else. A subagent can return `OK` having written nothing, and reporting a path to a file that does not exist is the one failure the user cannot recover from without starting over. **Checking existence is not reading content**: the Iron Rule governs what you read out of the file, not whether you confirm it exists. If it is missing, halt and escalate — do not release a phantom path.
 2. Report the path to `brief.md`. The path, not its contents.
-3. State plainly that signal's job is done: the brief is the input to whatever builds — `superpowers:brainstorming` per component, a human, or another pipeline.
-4. Stop.
+3. If `open-threads.md` has any unchecked thread, report its path too, with the count — "4 threads still open". You may read it to get that count; stage 1 wrote it in your own session. Do not summarise what the threads say; the count and the path are the handover.
+4. State plainly that signal's job is done: the brief is the input to whatever builds — `superpowers:brainstorming` per component, a human, or another pipeline.
+5. Stop.
 
 **Do not read the brief and do not summarise it.** You have never seen §7 or §8 and you do not open them now to describe what you are handing over. The path is the handover.
 
@@ -205,7 +208,7 @@ If the pipeline ran **inline** because subagent dispatch was unavailable, say so
 | No baseline count exists (resumed run, stage 1 did not run) | The check is unavailable, not passed. Release only after saying so explicitly. |
 | Subagent returns a malformed RETURN block | Re-dispatch once with the contract restated. On a second failure: halt for stage 2, degrade for `expanding-scope`. |
 | `brief.md` missing at release despite `status: OK` | Halt and escalate. Never report a path to a file that is not there. |
-| User abandons mid-run | Artifacts remain on disk. **Stage 1 writes `brief.md` §1–§6 as soon as the advancement gate is met**, so an interrogation that got that far survives — what is on disk is a real brief whose §5 says scope is unsettled. Abandoned before the gate, only `00-request.md` survives and the questions start again. Say which of the two happened rather than letting the user guess. |
+| User abandons mid-run | Artifacts remain on disk. **Stage 1 writes `brief.md` §1–§6 as soon as the advancement gate is met**, so an interrogation that got that far survives — what is on disk is a real brief whose §5 says scope is unsettled. Abandoned before the gate, `open-threads.md` survives with whatever coverage and threads stage 1 had banked, so the next run resumes warm rather than cold. Only a run abandoned before the first answer leaves nothing but `00-request.md`. Say which of the two happened rather than letting the user guess. |
 | No web/subagent capability | Signal requires subagent dispatch. If unavailable, run each stage inline in the main thread and say so — degraded context purity. |
 
 **On the no-subagent case:** running inline is a degradation you announce, not a silent fallback. Tell the user that context purity is degraded because the work is running in your thread. Never let a missing subagent capability skip a stage — a skipped stage is a worse failure than a dirty context. Stages 1 and 2 produce the same artifacts inline; only your context suffers.
@@ -219,7 +222,7 @@ If the pipeline ran **inline** because subagent dispatch was unavailable, say so
 - Designing, planning, or building after release.
 - Overwriting an existing run directory without asking.
 - Dispatching stage 1 as a subagent — it is interactive.
-- Advancing out of stage 1 with an unadjudicated expansion candidate, or writing §5 with a candidate missing from both the in-scope list and the non-goals list. Every candidate is IN-SCOPE or NON-GOAL, and every one leaves a trace in §5.
+- Advancing out of stage 1 with an unadjudicated expansion candidate, or writing §5 with a candidate missing from all three of its lists. Every candidate is IN-SCOPE, NON-GOAL or DEFER, and every one leaves a trace in §5 — a deferred one leaves a second trace in `open-threads.md`.
 - Advancing out of stage 1 with a filled coverage dimension that reached no section — §6 Existing Context above all.
 - Writing, editing or drafting §7 or §8 yourself, at any point, including "just to unblock stage 2".
 - Releasing a brief after a `BLOCKED` from stage 2.
@@ -232,6 +235,9 @@ If the pipeline ran **inline** because subagent dispatch was unavailable, say so
 - Going to stage 2 with §5 still saying expansion has not run. It has — successfully, emptily, or not at all — and §5 must say which. The rewrite is not conditional on candidates existing.
 - Telling a user that a resumed run picks up where they left off when no `brief.md` exists. It does not; that run never reached the advancement gate, so nothing was written and the questions start again.
 - Inferring a resumed run's stage from what is on disk instead of asking the user.
+- Treating `open-threads.md` as off-limits. Stage 1 wrote it in your session; it is a main-thread file like `00-request.md`, and refusing to read it breaks warm resume for no gain.
+- Reading `open-threads.md` and then summarising the threads to the user at release. Report the path and the count.
+- Telling the user a pre-gate run was lost when `open-threads.md` is on disk. It was not.
 
 Every one of these means: stop, and route the path instead.
 
