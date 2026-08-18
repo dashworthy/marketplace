@@ -160,4 +160,84 @@ newcase
 printf '{"file": "/nonexistent", "edits": [' > "$RUN/receipts/broken.json"
 expect "malformed receipt exits 2" 2
 
+# --- F. a claimed range containing @param must be rejected --------------------
+
+newcase
+cat > "$RUN/before/Tagged.php" <<'EOF'
+<?php
+/**
+ * Charges the card.
+ * @param int $amount
+ * @return void
+ */
+function charge(int $amount): void {}
+EOF
+cat > "$WORK/Tagged.php" <<'EOF'
+<?php
+/**
+ * Takes payment for an order already priced.
+ */
+function charge(int $amount): void {}
+EOF
+cat > "$RUN/receipts/Tagged.php.json" <<EOF
+{"file": "$WORK/Tagged.php",
+ "before": "$RUN/before/Tagged.php",
+ "edits": [{"start": 3, "end_before": 5, "lines_after": 1}],
+ "left_alone": 0}
+EOF
+expect "a claimed range containing @param fails proof 2" 1
+
+# --- G. prose-only range above the tags is legal ------------------------------
+
+newcase
+cat > "$RUN/before/Tagged.php" <<'EOF'
+<?php
+/**
+ * Charges the card.
+ * @param int $amount
+ * @return void
+ */
+function charge(int $amount): void {}
+EOF
+cat > "$WORK/Tagged.php" <<'EOF'
+<?php
+/**
+ * Takes payment for an order that has already been priced.
+ * Assumes a card is on file.
+ * @param int $amount
+ * @return void
+ */
+function charge(int $amount): void {}
+EOF
+cat > "$RUN/receipts/Tagged.php.json" <<EOF
+{"file": "$WORK/Tagged.php",
+ "before": "$RUN/before/Tagged.php",
+ "edits": [{"start": 3, "end_before": 3, "lines_after": 2}],
+ "left_alone": 0}
+EOF
+expect "a prose-only range above the tags passes both proofs" 0
+
+# --- H. Sphinx field lists count as annotations too ---------------------------
+
+newcase
+cat > "$RUN/before/sync.py" <<'EOF'
+def reconcile(user_id):
+    """Reconciles the user.
+
+    :param user_id: the user
+    :returns: nothing
+    """
+EOF
+cat > "$WORK/sync.py" <<'EOF'
+def reconcile(user_id):
+    """Brings our copy of a user back in line with the provider's."""
+EOF
+cat > "$RUN/receipts/sync.py.json" <<EOF
+{"file": "$WORK/sync.py",
+ "before": "$RUN/before/sync.py",
+ "edits": [{"start": 2, "end_before": 6, "lines_after": 1}],
+ "left_alone": 0}
+EOF
+expect "a claimed range containing a Sphinx field fails proof 2" 1
+
 exit $fail

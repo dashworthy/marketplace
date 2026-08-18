@@ -15,6 +15,7 @@ Exit codes:
 """
 import json
 import pathlib
+import re
 import sys
 
 EXIT_OK, EXIT_PROOF_FAILED, EXIT_MALFORMED = 0, 1, 2
@@ -55,6 +56,35 @@ def strip(lines, ranges):
     return [ln for i, ln in enumerate(lines, start=1) if i not in drop]
 
 
+# An annotation line is one whose first non-whitespace content, after an
+# optional comment leader, begins with @ or matches a Sphinx field.
+#
+# This is a pattern, not a language table: it needs no knowledge of the file it
+# is applied to, which is what keeps vernacular working on languages nobody has
+# registered with it.
+#
+# It is deliberately over-inclusive. A false positive costs one docblock left
+# un-rewritten, which the report names under "Skipped". A false negative costs
+# a mangled annotation in the user's source. Widen this freely; never narrow it
+# to catch a few more docblocks.
+#
+# The leader alternation is ordered longest-first: '//' before '#' is
+# irrelevant, but '///' must precede '//' or the regex consumes two slashes and
+# leaves a third that fails the following @-test.
+ANNOTATION = re.compile(
+    r'^[ \t]*(?:\*|///|//|--|#)?[ \t]*'
+    r'(?:@|:(?:param|type|returns|rtype|raises)\b)'
+)
+
+
+def annotation_in_range(lines, start, end):
+    """First 1-based line number in [start, end] that is an annotation, or None."""
+    for i in range(start, min(end, len(lines)) + 1):
+        if ANNOTATION.match(lines[i - 1]):
+            return i
+    return None
+
+
 def check_receipt(path):
     """Return (status, message). status is one of ok / fail / malformed."""
     try:
@@ -79,6 +109,18 @@ def check_receipt(path):
         if b_start <= prev_end:
             return "malformed", f"overlapping claimed ranges at before-line {b_start}"
         prev_end = max(prev_end, b_end)
+
+    # Proof 2 is checked against the BEFORE file, which makes it a precondition
+    # on the ranges rather than a comparison of two states: a range containing
+    # an annotation was never legal to claim, so there is no window in which a
+    # tag is edited and then detected.
+    for b_start, b_end, _, _ in spans:
+        hit = annotation_in_range(before_lines, b_start, b_end)
+        if hit is not None:
+            return "fail", (
+                f"proof2 annotation at line {hit} inside claimed range "
+                f"{b_start}-{b_end}"
+            )
 
     before_rest = strip(before_lines, [(b0, b1) for b0, b1, _, _ in spans])
     after_rest = strip(after_lines, [(a0, a1) for _, _, a0, a1 in spans])
