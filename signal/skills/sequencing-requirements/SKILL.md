@@ -1,13 +1,15 @@
 ---
 name: sequencing-requirements
-description: Stage 2 of the signal discovery pipeline, invoked by signal:conducting-discovery once stage 1 has written sections 1 to 6 of brief.md with every expansion candidate adjudicated — appends section 7, the body of the work ordered by dependency (what must be understood or built before what, and why), and section 8, the handoff pointer. It appends only; it never edits stage 1's sections, does not split work into separable units, and does not design or build. Runs only as part of the signal pipeline, dispatched by the conductor; it does not self-trigger on general feature or build requests.
+description: Stage 2 of the signal discovery pipeline, invoked by signal:conducting-discovery once stage 1 has written sections 1 to 6 of brief.md with every expansion candidate adjudicated — appends section 7, the body of the work ordered by dependency (what must be understood or built before what, and why), and section 8, the handoff pointer. It also reads open-threads.md so section 7 can cite unresolved threads by handle and section 8 can name the file. It appends only; it never edits stage 1's sections, does not split work into separable units, and does not design or build. Runs only as part of the signal pipeline, dispatched by the conductor; it does not self-trigger on general feature or build requests.
 ---
 
 # Sequencing Requirements
 
 ## Overview
 
-You are dispatched with one input: the path to `brief.md`. It already exists. Stage 1 wrote **§1–§6** into it — the requirements across all six coverage dimensions, with every expansion candidate the user adjudicated already placed: accepted ones written in as requirements, rejected ones in §5's non-goals with the user's reason.
+You are dispatched with two inputs: the path to `brief.md`, and the path to `open-threads.md`. Both already exist. Stage 1 wrote **§1–§6** into it — the requirements across all six coverage dimensions, with every expansion candidate the user adjudicated already placed: accepted ones written in as requirements, rejected ones in §5's non-goals with the user's reason.
+
+`open-threads.md` is stage 1's working state: a coverage table and a list of unresolved threads, each with a bolded handle. **You read it and you never write it.** It is not a requirements section and it is not part of the brief — you use it for exactly two things, both specified below: citing a handle in a §7 component's open risks, and naming the file in §8.
 
 **Your job is to append §7 and §8. That is all of it.** Read §1–§6 to understand the work; then write two new sections onto the end of the file. There is no separate requirements artifact, nothing to transcribe, and no restatement to author. You do not design a solution and you do not plan an implementation.
 
@@ -60,7 +62,7 @@ The first six already exist when you are dispatched. Append yours with exactly t
 
 `## 7. The Work, In Dependency Order`, `## 8. How to Consume This Brief`.
 
-**Note for §8:** state plainly that signal's job is finished and that this brief is the input to whatever builds — `superpowers:brainstorming` per component, a human, or another pipeline — named as candidate consumers, not as a chosen one. Make **no claim about what happens next**: no recommended next step, no proposed approach, no effort estimate, no "start with §7.1". §8 is a pointer, not a plan. It is the last thing a downstream reader sees, and the only section that tells them what this document is for.
+**Note for §8:** state plainly that signal's job is finished and that this brief is the input to whatever builds — `superpowers:brainstorming` per component, a human, or another pipeline — named as candidate consumers, not as a chosen one. Name `open-threads.md` alongside it as a live companion listing what the interrogation surfaced and never resolved, so a reader knows the brief is not the whole record. Naming an unresolved thread is not a recommendation about what to do with it, and the prohibition below stands unchanged. Make **no claim about what happens next**: no recommended next step, no proposed approach, no effort estimate, no "start with §7.1". §8 is a pointer, not a plan. It is the last thing a downstream reader sees, and the only section that tells them what this document is for.
 
 ## Section 7 — The Dependency-Ordered Body
 
@@ -72,7 +74,7 @@ Each component states five fields:
 - **Depends on** — which earlier components it needs, by name.
 - **Why it follows** — what specifically it needs from its prerequisites, not just that it needs them.
 - **Inputs / outputs** — its interface, stated in a sentence.
-- **Open risks** — what is still uncertain about it.
+- **Open risks** — what is still uncertain about it. Where an uncertainty is already tracked as an open thread, cite it by its handle — "unresolved: `sso-vs-magic-link`" — rather than restating it. A §5 deferred candidate that bears on this component belongs here, cited the same way.
 
 ## Ordering Rules
 
@@ -114,3 +116,5 @@ If you cannot append §7 and §8 (contradictory requirements, a requirement sect
 - Ordering §7 by importance or by effort instead of by dependency.
 - A §7 component with an empty "Depends on" when it plainly depends on something.
 - Writing anything into §8 about what should happen next.
+- Writing to `open-threads.md`, or closing a thread. You read it. Stage 1 owns it, with the user in the room.
+- Copying a thread's full text into §7 or §8 instead of citing its handle. The reader has the file.

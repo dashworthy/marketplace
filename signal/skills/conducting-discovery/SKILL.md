@@ -160,7 +160,7 @@ Stage 1 ends with `brief.md` §1–§6 on disk and the line count of the **final
 
 ### Stage 2 — Sequence (dispatched)
 
-Dispatch `signal:sequencing-requirements` as a subagent with one input: **the path to `brief.md`**, the file stage 1 just wrote. There is no second path — it reads §1–§6 and appends to the same file.
+Dispatch `signal:sequencing-requirements` as a subagent with two inputs: **the path to `brief.md`**, the file stage 1 just wrote, and the path to `open-threads.md`. It reads §1–§6 and appends to `brief.md`; it reads `open-threads.md` and never writes it.
 
 It appends **§7 and §8 only**: the dependency-ordered body and the handoff pointer. It does not rewrite, re-word or reorder §1–§6, and neither do you. The finished brief reads in two voices — yours for the requirements, the subagent's for the body — and that is the intended shape, not a defect to smooth over.
 
