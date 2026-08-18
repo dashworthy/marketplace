@@ -24,7 +24,7 @@ newcase() {
   mkdir -p "$RUN/before" "$RUN/receipts"
 }
 
-# --- A. clean single edit: 3 lines replaced by 6 ------------------------------
+# --- A. clean single edit: 3 lines replaced by 5 ------------------------------
 
 newcase
 cat > "$RUN/before/Billing.php" <<'EOF'

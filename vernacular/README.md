@@ -7,13 +7,15 @@ a human reading the code can tell what it is for - and proves it changed nothing
 
 **Prose only.** vernacular writes human-readable descriptions. It never writes, edits or
 deletes a structured annotation - `@param`, `@return`, `@throws`, `@var`, generics,
-Psalm/PHPStan annotations, Sphinx field lists - including on symbols that have none. Static
-analysis cannot break, because the tool cannot reach the lines static analysis reads.
+Psalm/PHPStan annotations, Sphinx field lists - including on symbols that have none. The
+proofs below reject any rewrite that alters or introduces an annotation *line*, so a run
+cannot silently break the tags static analysis reads.
 
 **Provably nothing else moved.** Every rewriter reports the exact line ranges it replaced.
 Delete those ranges from the before-file and the after-file, and the remainders must be
-byte-identical. Separately, a range containing an annotation was never legal to claim. Either
-proof failing halts the run, restores your files, and quarantines the evidence.
+byte-identical. Separately, a claimed range that contains or introduces an annotation *line*
+was never legal to claim. Either proof failing halts the run, restores your files, and
+quarantines the evidence.
 
 ## It identifies no language
 
@@ -67,5 +69,11 @@ you is only safe when there is nothing else in the file to lose.
   touch keep whatever prose they had.
 - **Type coverage.** It writes no annotations, including on symbols that have none. That is a
   static analysis concern, and this tool is deliberately incapable of touching it.
+- **Byte-identical interiors of *multi-line* annotations.** The proofs guard annotation
+  *lines* - a tag's opening line and any single-line tag. The continuation lines of a
+  multi-line annotation (a wrapped `array{...}` shape, a multi-line `@throws` description)
+  are held in place by the rewriter's instructions, not by the mechanical proof. In practice
+  the rewriter never reaches into a tag block - descriptions sit above the tags - but the
+  guarantee there is prompt-enforced, not proved.
 - **That a diagram is the best diagram.** It draws when there is a shape and stays quiet
   otherwise; it does not iterate toward the clearest possible rendering.

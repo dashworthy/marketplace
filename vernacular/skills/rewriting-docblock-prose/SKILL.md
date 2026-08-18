@@ -29,8 +29,9 @@ document does not restate them, so that there is one copy to change.
 
 ## Scope
 
-Map each hunk to its **enclosing symbol** - the function, method, or class whose body or
-signature the hunk falls inside. Those symbols are your scope.
+Map each hunk to its **enclosing symbol** - the nearest enclosing documentable unit (function,
+method, class, interface, trait, module, or property) whose body or signature the hunk falls
+inside. Those symbols are your scope.
 
 - A symbol in scope with a docblock: apply the gate to its description.
 - A symbol in scope with **no** docblock: write one. Prose only.
@@ -41,7 +42,11 @@ signature the hunk falls inside. Those symbols are your scope.
 
 1. **Never write, edit, or delete a structured annotation.** `@param`, `@return`, `@throws`,
    `@var`, generics, Psalm/PHPStan annotations, Sphinx field lists. This includes symbols that
-   have none: you write prose, never tags.
+   have none: you write prose, never tags. A multi-line annotation - a `@param array{...}`
+   spread over several lines, a wrapped `@throws` description - is off-limits in full,
+   continuation lines included. Those interior lines do not begin with `@`, so the proof does
+   not catch a range that claims them; you are the only guard there. Never claim any line at or
+   below a docblock's first tag.
 2. **Never claim a range containing an annotation line.** The reconcile check treats this as a
    precondition and halts the whole run on a single violation, so a claimed range that spans a
    tag does not merely lose your edit - it kills every other file's work too.
@@ -94,6 +99,8 @@ wrote 0 edits, left 0 alone, receipt at <receipt_path>  BLOCKED: <one-line reaso
   code next to it.
 - Adding a `@param` to a symbol that had none "for completeness."
 - Claiming a range that includes a tag line so you can reflow the whole docblock.
+- Claiming a range that reaches into a multi-line tag's continuation lines because they don't
+  start with `@`.
 - Rewriting a symbol the hunks do not reach because its prose is bad.
 - Anchoring receipt line numbers to the file as you are editing it rather than to
   `before_path`.

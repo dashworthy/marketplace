@@ -401,5 +401,11 @@ drifts toward rewriting everything still produces plausible output on every othe
   touch keep whatever prose they had.
 - **Type coverage.** It writes no annotations, including on symbols that have none. That is a
   static analysis concern and this tool is deliberately incapable of touching it.
+- **Byte-identical interiors of *multi-line* annotations.** The proofs guard annotation
+  *lines* - a tag's opening line and any single-line tag. The continuation lines of a
+  multi-line annotation (a wrapped `array{...}` shape, a multi-line `@throws` description)
+  are held in place by the rewriter's instructions, not by the mechanical proof. In practice
+  the rewriter never reaches into a tag block - descriptions sit above the tags - but the
+  guarantee there is prompt-enforced, not proved.
 - **That a diagram is the best diagram.** It draws when there is a shape and stays quiet
   otherwise; it does not iterate toward the clearest possible rendering.

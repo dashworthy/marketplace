@@ -74,7 +74,7 @@ if [ -f "$REF/receipt-schema.md" ]; then
 fi
 
 # No language table may be reintroduced anywhere in the plugin.
-if find "$PLUGIN" -type f -not -path "$PLUGIN/tests/*" -exec grep -liE 'detecting-the-stack|stack-marker' {} + 2>/dev/null | grep -q .; then
+if find "$PLUGIN" -type f -not -name validate.sh -exec grep -liE 'detecting-the-stack|stack-marker' {} + 2>/dev/null | grep -q .; then
   bad "no stack-detection artefact exists in the plugin"
 else
   ok "no stack-detection artefact exists in the plugin"

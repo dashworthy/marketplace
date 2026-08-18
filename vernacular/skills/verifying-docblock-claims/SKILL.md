@@ -45,7 +45,7 @@ truth, not quality. Reverting merely-mediocre prose to worse prose helps nobody.
 An unsupported claim means the docblock goes back to its **original bytes** from
 `before_path`. You do not rewrite it, improve it, or hedge it.
 
-Repairing is a second guess at the thing that was just got wrong, by an agent with no more
+Repairing is a second guess at the thing it just got wrong, by an agent with no more
 information than the one that got it wrong. The original prose was at least honest about being
 unhelpful; a repaired claim is a fresh assertion nobody checked.
 
