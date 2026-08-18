@@ -240,4 +240,27 @@ cat > "$RUN/receipts/sync.py.json" <<EOF
 EOF
 expect "a claimed range containing a Sphinx field fails proof 2" 1
 
+# --- I. singular Sphinx forms (:return:, :raise:) are caught too ---------------
+
+newcase
+cat > "$RUN/before/sync.py" <<'EOF'
+def reconcile(user_id):
+    """Reconciles the user.
+
+    :return: the result
+    :raise: error
+    """
+EOF
+cat > "$WORK/sync.py" <<'EOF'
+def reconcile(user_id):
+    """Brings our copy of a user back in line with the provider's."""
+EOF
+cat > "$RUN/receipts/sync.py.json" <<EOF
+{"file": "$WORK/sync.py",
+ "before": "$RUN/before/sync.py",
+ "edits": [{"start": 2, "end_before": 7, "lines_after": 1}],
+ "left_alone": 0}
+EOF
+expect "a claimed range containing singular Sphinx fields fails proof 2" 1
+
 exit $fail

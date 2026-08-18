@@ -73,7 +73,8 @@ def strip(lines, ranges):
 # leaves a third that fails the following @-test.
 ANNOTATION = re.compile(
     r'^[ \t]*(?:\*|///|//|--|#)?[ \t]*'
-    r'(?:@|:(?:param|type|returns|rtype|raises)\b)'
+    r'(?:@|:(?:param(?:eter)?|arg(?:ument)?|key(?:word)?|type|rtype|vartype'
+    r'|raises?|except(?:ion)?|[ic]?var|returns?|yields?|meta)\b)'
 )
 
 
