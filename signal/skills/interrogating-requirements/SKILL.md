@@ -155,6 +155,65 @@ you to do.
 - **Force the non-goals.** People define scope by what they will build; make them
   state what they will not build.
 
+## The Probe Families
+
+Four of them. This is not a running order — 1 and 2 shape the whole interrogation;
+3 and 4 fire when their trigger appears.
+
+### 1. Omissions
+
+Find what the user holds as central, then find what is conspicuously missing.
+
+**Never ask about an absence directly.** "Did you leave that out on purpose?" invites
+them to construct a principled reason for an accidental gap, and you will never
+learn which of the two it was. Probe the absence as a hypothesis instead:
+
+> "I'd expect anyone shipping this to also want audit logging on it. My guess is
+> you're not, and my guess at why is that nobody has asked you for it yet."
+
+Deliberate and accidental omissions react visibly differently to that.
+
+### 2. Surface, Then Depth
+
+**Broad pass first**, planting conventional baselines cheaply across all six
+coverage dimensions. **Then allocate depth wherever those baselines broke.**
+
+Do not decide in advance which dimension sounds hard. Corrections are your depth map,
+and a dimension nobody corrected does not need another round.
+
+### 3. Systems — gated on §6
+
+**Run this only once §6 Existing Context is filled and shows a system that has
+actually been operated.** Greenfield with nothing running has no lived consequence
+to mine; skip it, and record in §6 that it was skipped and why.
+
+Delayed-consequence knowledge has no written trace anywhere. A proposal, a thread, a
+post — those exist. "We structured it this way, it looked fine for two quarters,
+then it killed our margin" never gets written down, because by the time the
+consequence landed nobody connected it back to the decision. It survives only in
+someone who lived it.
+
+Probe both directions:
+
+- **Backward.** What did you stop doing, and how long did it take to work out why?
+  Find the effect, then walk back to the cause that was invisible at the time.
+- **Forward.** Where do you make a call and never find out whether it was right?
+  Missing feedback loops mark exactly where a downstream builder will be most
+  confidently wrong, because no correction signal exists anywhere in the world to
+  have taught anyone better.
+
+Anything this surfaces and you do not chase becomes a thread — usually
+`corrected-not-dug` or `next-probe`.
+
+### 4. Stated Process Versus Real Behavior
+
+People describe the process they believe they follow. It is tidier and more
+principled than the one they actually run.
+
+When an account of the current workaround sounds cleaner than the behavior probably
+was, **push once** on the specific discrepancy. If they hold, drop it and move on.
+Once, not twice — a second push buys nothing and costs the room.
+
 ## Escape Valve
 
 If the request is genuinely trivial (one-liner, rename, config tweak), there is nothing to discover. Say so in one sentence and exit the pipeline without producing a brief. If in doubt, it is not trivial — interrogate.
