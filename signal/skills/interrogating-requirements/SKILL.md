@@ -104,14 +104,56 @@ actually said, in their own words wherever you have them.
   Two files, two jobs. §5 may point at a deferred expansion candidate's thread
   handle; that pointer is the only crossing.
 
-## How to Interrogate
+## How to Interrogate — Hypothesis, Then Correction
 
-- One sharp question at a time. Batching lets the user skate past the hard one.
-- Quote the vague phrase back. "You said 'it should be fast' — fast meaning what? p95 latency under what, on what payload?"
-- Reject non-answers. "Whatever makes sense" / "the usual" / "you decide" are not answers.
-- Surface hidden assumptions — ask the question whose answer you're tempted to assume.
-- Force the non-goals. People define scope by what they'll build; make them state what they will NOT build.
-- Prefer concrete choices over open-ended prompts when it sharpens the answer.
+**Do not ask open questions. Offer a hypothesis and invite correction.**
+
+The hypothesis is the **conventional answer**: what most competent practitioners in
+this domain would do, stated plainly, with the reasoning visible.
+
+> "You want SSO. I'm assuming, like most teams this size, that's to kill the
+> password-reset support load rather than a compliance requirement. Is that the
+> driver, or is something else?"
+
+- **They agree** — the ground is standard here. Fill it in and move on. Cheap.
+- **They correct you** — this is a departure. Dig.
+
+Departures are where the requirements actually live. Everything else you could have
+guessed, and guessing it is fine — which is precisely what their agreement licenses
+you to do.
+
+### Rules for the baseline
+
+- **Set it at the field default. Never tune it to what the user already told you.**
+  A tuned baseline that draws agreement tells you only that you were listening. A
+  field-default baseline that draws agreement tells you something about the world.
+- **Keep it inline and local.** One baseline per probe, never a lecture up front.
+- **When you do not know what is conventional in this domain, say so inside the
+  probe** rather than inventing a baseline.
+
+  > "I don't have a strong sense of what's typical here, so correct me freely: I'd
+  > guess most teams in your position would..."
+
+  A wrong baseline makes ordinary practice look like a departure and lets a real
+  departure pass as unremarkable. It corrupts the depth map in both directions, and
+  you will not notice either failure from the inside.
+- **When someone corrects you, get the reason, not just the correction.** The
+  correction tells you what. Only the reason tells you what else it implies.
+- **When agreement arrives fast on something that should have been hard, ask what
+  would make it wrong.** A plausible hypothesis waved through encodes your guess as
+  a requirement — worse than an empty section, because it ships with confidence.
+
+### Rules that do not change
+
+- **One question per turn.** Never batch, never offer "a few things I'm wondering
+  about". Given ten questions a person answers one. Ten at once produces summaries;
+  one at a time produces stories.
+- **Quote the vague phrase back.** "You said 'it should be fast' — fast meaning
+  what? p95 latency under what, on what payload?"
+- **Reject non-answers.** "Whatever makes sense" / "the usual" / "you decide" are
+  not answers.
+- **Force the non-goals.** People define scope by what they will build; make them
+  state what they will not build.
 
 ## Escape Valve
 
