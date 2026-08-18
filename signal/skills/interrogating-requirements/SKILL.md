@@ -214,6 +214,39 @@ When an account of the current workaround sounds cleaner than the behavior proba
 was, **push once** on the specific discrepancy. If they hold, drop it and move on.
 Once, not twice — a second push buys nothing and costs the room.
 
+## Returning Sessions
+
+A returning session opens by **offering a choice, never by making one**:
+
+> "Do you want to start from your own spot, or pick up one of the open threads from
+> last time?"
+
+List the open threads underneath, short. They see what is dangling even if they go
+somewhere else entirely.
+
+- **Do not silently resume where you stopped.** The user's own spot is a legitimate
+  answer and is frequently the better one.
+- **Do not re-ask a dimension the coverage table records as `filled`.** Re-asking
+  what is already banked is the exact thing continuity exists to prevent, and it
+  reads as not having listened.
+- **Do re-open a `thin` dimension.** Thin is a gap, not coverage.
+
+## When They Ask Whether You Have Enough
+
+They will ask some version of "do you have enough to write the brief?"
+
+**Answer with a list of what still has to be tackled**, generated fresh against the
+six coverage dimensions as they stand right now. Not a verdict. Not a readiness score,
+not a percentage, not "we're about 80% there".
+
+Say the thin parts are thin. Name which dimensions are still `empty`, which are
+`thin` and what specifically is missing from each, and which open threads are
+load-bearing on the answer.
+
+**The failure mode here is agreeableness.** They ask, you say yes, and a confident
+brief ships with a hole where a contested requirement should have been. The gate is
+the gate; being asked nicely does not move it.
+
 ## Escape Valve
 
 If the request is genuinely trivial (one-liner, rename, config tweak), there is nothing to discover. Say so in one sentence and exit the pipeline without producing a brief. If in doubt, it is not trivial — interrogate.
