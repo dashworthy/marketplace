@@ -7,9 +7,9 @@ description: Stage 2 of the signal discovery pipeline, invoked by signal:conduct
 
 ## Overview
 
-You are dispatched with two inputs: the path to `brief.md`, and the path to `open-threads.md`. Both already exist. Stage 1 wrote **§1–§6** into it — the requirements across all six coverage dimensions, with every expansion candidate the user adjudicated already placed: accepted ones written in as requirements, rejected ones in §5's non-goals with the user's reason.
+You are dispatched with two inputs: the path to `brief.md`, and the path to `open-threads.md`. `brief.md` always exists; `open-threads.md` may be absent, on a run resumed from before this feature existed. Stage 1 wrote **§1–§6** into it — the requirements across all six coverage dimensions, with every expansion candidate the user adjudicated already placed: accepted ones written in as requirements, rejected ones in §5's non-goals with the user's reason, and deferred ones in §5's deferred list with their thread handle.
 
-`open-threads.md` is stage 1's working state: a coverage table and a list of unresolved threads, each with a bolded handle. **You read it and you never write it.** It is not a requirements section and it is not part of the brief — you use it for exactly two things, both specified below: citing a handle in a §7 component's open risks, and naming the file in §8.
+`open-threads.md` is stage 1's working state: a coverage table and a list of unresolved threads, each with a bolded handle. **You read it and you never write it.** It is not a requirements section and it is not part of the brief — you use it for exactly two things, both specified below: citing a handle in a §7 component's open risks, and naming the file in §8. If it is absent, proceed without it — §7 cites no thread handles and §8 omits the companion mention — and its absence is never a `BLOCKED`.
 
 **Your job is to append §7 and §8. That is all of it.** Read §1–§6 to understand the work; then write two new sections onto the end of the file. There is no separate requirements artifact, nothing to transcribe, and no restatement to author. You do not design a solution and you do not plan an implementation.
 
@@ -53,7 +53,7 @@ The finished `brief.md` has eight top-level headings, in this order:
 | 2 | **Users & Stakeholders** — who uses it, who's affected, who signs off | stage 1 |
 | 3 | **Success Criteria** — measurable or observable only; no aspirational prose | stage 1 |
 | 4 | **Constraints** — stack, timeline, budget, compliance, integrations, non-negotiables | stage 1 |
-| 5 | **Scope** — what's in; and **non-goals**, each with the user's reason | stage 1 |
+| 5 | **Scope** — what's in; **non-goals**, each with the user's reason; and **deferred**, each with its thread handle | stage 1 |
 | 6 | **Existing Context** — prior art, current workarounds, systems this must fit into | stage 1 |
 | 7 | **The Work, In Dependency Order** — the body of the brief | **you** |
 | 8 | **How to Consume This Brief** — explicit handoff pointer | **you** |
@@ -62,7 +62,7 @@ The first six already exist when you are dispatched. Append yours with exactly t
 
 `## 7. The Work, In Dependency Order`, `## 8. How to Consume This Brief`.
 
-**Note for §8:** state plainly that signal's job is finished and that this brief is the input to whatever builds — `superpowers:brainstorming` per component, a human, or another pipeline — named as candidate consumers, not as a chosen one. Name `open-threads.md` alongside it as a live companion listing what the interrogation surfaced and never resolved, so a reader knows the brief is not the whole record. Naming an unresolved thread is not a recommendation about what to do with it, and the prohibition below stands unchanged. Make **no claim about what happens next**: no recommended next step, no proposed approach, no effort estimate, no "start with §7.1". §8 is a pointer, not a plan. It is the last thing a downstream reader sees, and the only section that tells them what this document is for.
+**Note for §8:** state plainly that signal's job is finished and that this brief is the input to whatever builds — `superpowers:brainstorming` per component, a human, or another pipeline — named as candidate consumers, not as a chosen one. Name `open-threads.md` alongside it as a live companion listing what the interrogation surfaced and, where any threads remain open, what it never resolved, so a reader knows the brief is not the whole record. If the file is absent or every thread on it has been closed, §8 does not name it. Naming an unresolved thread is not a recommendation about what to do with it, and the prohibition below stands unchanged. Make **no claim about what happens next**: no recommended next step, no proposed approach, no effort estimate, no "start with §7.1". §8 is a pointer, not a plan. It is the last thing a downstream reader sees, and the only section that tells them what this document is for.
 
 ## Section 7 — The Dependency-Ordered Body
 

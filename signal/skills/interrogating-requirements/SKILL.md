@@ -100,7 +100,7 @@ actually said, in their own words wherever you have them.
 - **Close a thread by checking it off and moving what it produced into the coverage
   table.** Never delete it. The record of what was dangling is what makes the next
   session cheap.
-- **Never write `brief.md` content here, and never write threads into `brief.md`.**
+- **Never draft `brief.md` prose here, and never write threads into `brief.md`.**
   Two files, two jobs. §5 may point at a deferred expansion candidate's thread
   handle; that pointer is the only crossing.
 
@@ -185,7 +185,8 @@ and a dimension nobody corrected does not need another round.
 
 **Run this only once §6 Existing Context is filled and shows a system that has
 actually been operated.** Greenfield with nothing running has no lived consequence
-to mine; skip it, and record in §6 that it was skipped and why.
+to mine; skip it, and record why in the §6 `Established` cell of `open-threads.md`'s
+coverage table — that reason carries into `brief.md`'s §6 when it is written.
 
 Delayed-consequence knowledge has no written trace anywhere. A proposal, a thread, a
 post — those exist. "We structured it this way, it looked fine for two quarters,
@@ -305,7 +306,7 @@ Write `brief.md` into the run directory supplied by the conductor, with exactly 
 
 **Every write you make is the whole file.** Write `brief.md` from line 1 and end it at §6, discarding anything that was there before — including a §7 and §8 left by a completed earlier run. This matters on a resumed run the user chose to restart at stage 1: those sections order work derived from requirements you are in the middle of replacing, so they are stale by definition. Leaving them produces a brief with two §7s once stage 2 appends its own, and makes the line count you report include sections stage 2 never wrote, which fails the two-writer check for a reason that has nothing to do with the boundary. You are not patching a file; you are writing one.
 
-**`brief.md` §1–§6 is written twice, by you, and both writes use the structure above.** The first lands the moment the gate is met, so the interrogation is durable. The second replaces it after adjudication, so the dispositions are in. Same file, same sections, same single writer — the second write supersedes the first completely, and there is no marker, no second file and nothing to reconcile between them. If the run ends between the two writes, what is on disk is a real brief that says its scope is unsettled, which is worth incomparably more than nothing.
+**`brief.md` §1–§6 is written twice, by you, and both writes use the structure above.** The first lands the moment the gate is met, so the interrogation is durable. The second replaces it after adjudication, so the dispositions are in. Same file, same sections, same single writer — the second write supersedes the first completely, and there is no marker, no second copy of it and nothing to reconcile between them. If the run ends between the two writes, what is on disk is a real brief that says its scope is unsettled, which is worth incomparably more than nothing.
 
 **Count the lines after the final write, before you hand back.** Record the total number of lines in the file — everything you wrote, from line 1 to the last line — and report it to the conductor along with the path. The number that matters is the one for the file **as you leave it**, whichever write left it that way: the rewrite in step 5 always happens, on all three paths, so it is always the one you count after. The first write's count is never the one to report, and if you took it, take it again. It compares that number against what stage 2 reports later; a mismatch means stage 2 edited sections it was forbidden to touch. Count now, while you are the only writer: once you hand back, nobody may open the file to work it out, so a count not taken here is a check that cannot happen at all.
 
@@ -317,7 +318,7 @@ Then hand control back to `signal:conducting-discovery`.
 
 - "This is clear enough, I'll just start" after 1–2 rounds
 - Any dimension still answered with a vague phrase
-- A gap filled with your OWN assumption instead of a question
+- A gap filled with your OWN assumption instead of a question — a baseline the user explicitly agreed to is fine; a gap you closed without ever putting the assumption to them is not
 - "The user seems impatient, I'll stop asking" — impatience is not coverage
 - No written non-goals list exists
 - Dispatching `expanding-scope` before `brief.md` §1–§6 is on disk. The write comes first; that ordering is the whole point of it.
@@ -329,6 +330,7 @@ Then hand control back to `signal:conducting-discovery`.
 - Carrying a success criterion into §3 that cannot actually be measured
 - A filled coverage dimension that reached no section — §6 Existing Context in particular, which is the easiest one to gather and then forget to write
 - Writing §7 or §8, or ordering the work by dependency. That is stage 2's.
+- Ending a session with threads that could have been closed left open, or an `open-threads.md` whose list only ever grows — closing a thread by checking it off and moving what it produced into the coverage table is an obligation, not a courtesy.
 
 All of these mean: ask the next question, or resolve the next candidate. The gate is not met.
 

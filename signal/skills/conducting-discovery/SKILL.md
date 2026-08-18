@@ -21,7 +21,7 @@ Signal produces one artifact — `brief.md` — and stops. There is no review st
 
 Three non-negotiables:
 
-1. **Never read an artifact produced by a dispatched subagent.** Not `brief.md` §7, not §8. You route paths and act on RETURN blocks. Files **written in the main thread are yours to read** — `00-request.md`, and `open-threads.md`, which stage 1 writes in your own session. That is not an exception carved into this rule; it is what the rule has always said. The prohibition is on artifacts a *dispatched subagent* authored. Your context stays small and decision-grade — that is the entire point of the architecture, and it is worth more than your curiosity about any single file.
+1. **Never read an artifact produced by a dispatched subagent.** Not `brief.md` §7, not §8. You route paths and act on RETURN blocks. Files **written in the main thread are yours to read** — `00-request.md`, and `open-threads.md`, which stage 1 writes in your own session. That is not an exception carved into this rule; it is what the rule has always said. The prohibition is on artifacts a *dispatched subagent* authored. `brief.md` is the one exception that predicate doesn't reach: even though you wrote §1–§6 in the main thread, the file — not the section — is the unit, and stage 2's §7–§8 live inside that same file, so the whole of it stays closed to you. Your context stays small and decision-grade — that is the entire point of the architecture, and it is worth more than your curiosity about any single file.
 2. **Stage 1 is yours.** It is interactive, so it runs in the main thread and you write `brief.md` §1–§6 yourself. **This is the one exception, and it is not a licence to read the rest.** Writing sections from a conversation you were part of is not the same act as reading a file a subagent authored — and §7 and §8, which stage 2 appends to that same file, remain closed to you. Handing content *down* to a subagent — as you do when you dispatch `expanding-scope` with the requirements inline — is likewise not a violation: the rule governs what you read *back*.
 3. **Signal stops at the brief.** No design, no plan, no build, no "and here's how I'd implement it".
 
@@ -160,7 +160,7 @@ Stage 1 ends with `brief.md` §1–§6 on disk and the line count of the **final
 
 ### Stage 2 — Sequence (dispatched)
 
-Dispatch `signal:sequencing-requirements` as a subagent with two inputs: **the path to `brief.md`**, the file stage 1 just wrote, and the path to `open-threads.md`. It reads §1–§6 and appends to `brief.md`; it reads `open-threads.md` and never writes it.
+Dispatch `signal:sequencing-requirements` as a subagent with two inputs: **the path to `brief.md`**, the file stage 1 just wrote, and the path to `open-threads.md`. Pass the `open-threads.md` path only if that file exists — on a resumed run predating this feature it may be absent, and stage 2 is told so rather than handed a path to nothing. It reads §1–§6 and appends to `brief.md`; it reads `open-threads.md` and never writes it.
 
 It appends **§7 and §8 only**: the dependency-ordered body and the handoff pointer. It does not rewrite, re-word or reorder §1–§6, and neither do you. The finished brief reads in two voices — yours for the requirements, the subagent's for the body — and that is the intended shape, not a defect to smooth over.
 
