@@ -93,4 +93,16 @@ if [ -f "$REWRITER" ]; then
   grep_flat "$REWRITER" "whole lines"; check $? "rewriter states the whole-line replacement rule"
 fi
 
+# --- verifier ----------------------------------------------------------------
+
+VERIFIER="$PLUGIN/skills/verifying-docblock-claims/SKILL.md"
+[ -f "$VERIFIER" ]; check $? "verifying-docblock-claims/SKILL.md exists"
+
+if [ -f "$VERIFIER" ]; then
+  grep -q '^name: verifying-docblock-claims$' "$VERIFIER"; check $? "verifier frontmatter names itself"
+  grep_flat "$VERIFIER" "Revert, never repair"; check $? "verifier states revert-never-repair"
+  grep_flat "$VERIFIER" "bottom-up"; check $? "verifier states the bottom-up revert order"
+  grep_flat "$VERIFIER" "deleted from"; check $? "verifier states that a reverted edit leaves edits[]"
+fi
+
 exit $fail
