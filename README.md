@@ -23,6 +23,7 @@ Then install whichever plugins you want:
 |---|---|---|
 | **[signal](signal/README.md)** `0.1.0` | Discovery. Interrogates a vague request into hard requirements, surfaces what you didn't think to ask for, and orders the result into a brief where nothing appears before what it depends on. It produces a brief and stops — it does not design, plan, or build. | `/signal <request>` |
 | **[verity](verity/README.md)** `0.1.0` | Diff-scoped test hardening. Audits a branch diff for weakly-tested behaviour, writes tests and only tests to close the gaps, and verifies those tests actually assert what they claim — looping until thresholds are met or it runs out of road. Never modifies application code. | No command — invoke the `conducting-test-hardening` skill, or let it fire when implementation work finishes |
+| **[vernacular](vernacular/README.md)** `0.1.0` | Diff-scoped documentation hardening. Rewrites the docblock prose your branch touched into plain language, in place, drawing an ASCII diagram where the thing has a shape. Proves that executable code and structured annotations came out byte-identical, and halts if they did not. Writes no `@param`, `@return`, or any other tag. | `/vernacular [ref]` |
 
 They are not sequential stages of one tool, but they do sit at opposite ends of the same piece of work: signal runs before anything is built, when the question is *what are we actually making?* Verity runs after, when the question is *would anything notice if this broke?* Neither knows about the other, and neither needs the other installed.
 

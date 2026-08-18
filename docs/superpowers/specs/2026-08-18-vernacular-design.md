@@ -161,10 +161,16 @@ agrees with itself. This mirrors verity's `verifying-test-integrity` and guardto
 }
 ```
 
-`hunks` carries **working-tree line numbers** — the after side of `git diff --unified=0`,
-computed by the conductor from the diff alone without opening the file. `receipt_path` slugs
-the repository-relative path by replacing `/` with `-`, so two files of the same basename in
-different directories cannot collide.
+`hunks` carries **working-tree line numbers** — the after side of the diff, filtered down to
+only the `@@` header's range tokens before the result reaches the conductor. `--unified=0`
+does not achieve that on its own: it removes the unchanged context lines but still prints
+every changed line, and the `@@` header's own trailing suffix carries the enclosing function's
+source text — so even filtering to `^@@` leaks source into the conductor's context. A `sed`
+filter over `git diff --unified=0` extracts only the range tokens themselves (`104,28` style —
+a start line and a length) and nothing else, and that is what `hunks` is computed from; the
+diff body never enters the conductor's context. `receipt_path` slugs the repository-relative
+path by replacing `/` with `-`, so two files of the same basename in different directories
+cannot collide.
 
 Every path is named. A subagent cannot resolve a relative citation from a directory it was
 never told it is standing in — the defect guardtower found on its first live run, where an
@@ -189,7 +195,8 @@ receipt the conductor reconciles against always describes the file's final state
 
 ```json
 {
-  "file": "src/Billing.php",
+  "file": "/abs/path/in/the/working/tree/src/Billing.php",
+  "before": "/abs/path/to/.vernacular/<run>/before/src/Billing.php",
   "edits": [
     {"start": 108, "end_before": 110, "lines_after": 9},
     {"start": 240, "end_before": 239, "lines_after": 7}
@@ -200,6 +207,10 @@ receipt the conductor reconciles against always describes the file's final state
   ]
 }
 ```
+
+`reconcile.py` resolves both sides of Proof 1 from the receipt alone. Deriving the before-path
+from the run directory instead would tie the checker to one directory layout and make it
+untestable outside a real run - which is exactly what `tests/reconcile.sh` must do.
 
 `end_before = start - 1` is an **insertion** — a zero-length before-range. Writing a
 docblock where none existed needs no special case; the arithmetic below covers it unchanged.
@@ -231,9 +242,11 @@ offending paths — never file content.
 claimed ranges for annotation lines. One hit halts the run.
 
 An **annotation line** is one whose first non-whitespace content, after an optional comment
-leader (`*`, `#`, `//`, `///`, `--`), begins with `@`, or matches a Sphinx field
-(`:param`, `:type`, `:returns`, `:rtype`, `:raises`). This is a pattern, not a language
-table — it needs no knowledge of the file it is applied to.
+leader (`*`, `#`, `//`, `///`, `--`), begins with `@`, or matches a Sphinx field (`:param`,
+`:parameter`, `:arg`, `:argument`, `:key`, `:keyword`, `:type`, `:rtype`, `:vartype`, `:var`,
+`:ivar`, `:cvar`, `:returns`, `:return`, `:yields`, `:yield`, `:raises`, `:raise`, `:except`,
+`:exception`, `:meta`). This is a pattern, not a language table — it needs no knowledge of the
+file it is applied to.
 
 It is deliberately over-inclusive, and the asymmetry is the reason: a false positive costs
 one docblock left un-rewritten, which the report names under **Skipped**. A false negative
@@ -330,6 +343,7 @@ vernacular/
 ├── .claude-plugin/plugin.json
 ├── README.md
 ├── commands/vernacular.md
+├── scripts/reconcile.py
 ├── skills/
 │   ├── clarifying-docblocks/
 │   │   ├── SKILL.md
@@ -340,9 +354,16 @@ vernacular/
 │   ├── rewriting-docblock-prose/SKILL.md
 │   └── verifying-docblock-claims/SKILL.md
 └── tests/
+    ├── reconcile.sh
     ├── validate.sh
     └── e2e.sh
 ```
+
+`scripts/reconcile.py` is where the two proofs live. The spec originally described them as
+"shell" without giving them a home; re-deriving line arithmetic inline on every run is how a
+silent off-by-one enters a tool whose entire value is that it cannot corrupt your source. It is
+a **pure checker** - restoring and quarantining are the conductor's job, because a checker that
+also mutates cannot be tested by running it.
 
 Plus an entry in `.claude-plugin/marketplace.json` and a row in the root `README.md` table.
 

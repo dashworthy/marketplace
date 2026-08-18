@@ -125,4 +125,20 @@ if [ -f "$COND" ]; then
   grep_flat "$COND" "Never run a bare"; check $? "conductor forbids the unfiltered git diff"
 fi
 
+# --- command and READMEs ------------------------------------------------------
+
+CMD="$PLUGIN/commands/vernacular.md"
+[ -f "$CMD" ]; check $? "commands/vernacular.md exists"
+if [ -f "$CMD" ]; then
+  grep -q '^description:' "$CMD"; check $? "command has a description"
+  grep_flat "$CMD" "clarifying-docblocks"; check $? "command invokes the conductor by name"
+fi
+
+[ -f "$PLUGIN/README.md" ]; check $? "vernacular/README.md exists"
+if [ -f "$PLUGIN/README.md" ]; then
+  grep_flat "$PLUGIN/README.md" "does not guarantee"; check $? "README states what it does not guarantee"
+fi
+
+grep_flat "$ROOT/README.md" "vernacular"; check $? "root README lists vernacular"
+
 exit $fail
