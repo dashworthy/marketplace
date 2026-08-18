@@ -105,4 +105,21 @@ if [ -f "$VERIFIER" ]; then
   grep_flat "$VERIFIER" "deleted from"; check $? "verifier states that a reverted edit leaves edits[]"
 fi
 
+# --- conductor ---------------------------------------------------------------
+
+COND="$PLUGIN/skills/clarifying-docblocks/SKILL.md"
+[ -f "$COND" ]; check $? "clarifying-docblocks/SKILL.md exists"
+
+if [ -f "$COND" ]; then
+  grep -q '^name: clarifying-docblocks$' "$COND"; check $? "conductor frontmatter names itself"
+  grep_flat "$COND" "file modified relative to"; check $? "conductor states the dirty-file halt"
+  grep_flat "$COND" "never opens a source file"; check $? "conductor states the context firewall"
+  grep_flat "$COND" "restore it from"; check $? "conductor states the quarantine-and-restore path"
+  grep_flat "$COND" "Left alone"; check $? "conductor reports the left-alone count"
+  grep_flat "$COND" "/dev/urandom"; check $? "conductor derives the run suffix from system entropy"
+  # Every dispatch payload must name skill_path - the defect guardtower found live.
+  grep -c 'skill_path' "$COND" | awk '$1 >= 2 {exit 0} {exit 1}'
+  check $? "conductor names skill_path in both dispatch payloads"
+fi
+
 exit $fail
