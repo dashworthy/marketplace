@@ -80,4 +80,17 @@ else
   ok "no stack-detection artefact exists in the plugin"
 fi
 
+# --- rewriter ----------------------------------------------------------------
+
+REWRITER="$PLUGIN/skills/rewriting-docblock-prose/SKILL.md"
+[ -f "$REWRITER" ]; check $? "rewriting-docblock-prose/SKILL.md exists"
+
+if [ -f "$REWRITER" ]; then
+  head -1 "$REWRITER" | grep -q '^---$'; check $? "rewriter has frontmatter"
+  grep -q '^name: rewriting-docblock-prose$' "$REWRITER"; check $? "rewriter frontmatter names itself"
+  grep_flat "$REWRITER" "never return a description you wrote"; check $? "rewriter states the receipt-only return"
+  grep_flat "$REWRITER" "Never claim a range containing an annotation line"; check $? "rewriter states the annotation prohibition"
+  grep_flat "$REWRITER" "whole lines"; check $? "rewriter states the whole-line replacement rule"
+fi
+
 exit $fail
