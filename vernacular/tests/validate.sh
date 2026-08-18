@@ -50,4 +50,34 @@ assert e["version"]=="0.1.0", f'version is {e["version"]!r}'
 PY
 check $? "vernacular is registered in the dashworthy marketplace"
 
+# --- references --------------------------------------------------------------
+
+REF="$PLUGIN/skills/clarifying-docblocks/references"
+for f in comprehension-gate.md diagram-rules.md receipt-schema.md; do
+  [ -f "$REF/$f" ]; check $? "references/$f exists"
+done
+
+if [ -f "$REF/comprehension-gate.md" ]; then
+  grep_flat "$REF/comprehension-gate.md" "Restates the signature";       check $? "gate names the restates-the-signature failure"
+  grep_flat "$REF/comprehension-gate.md" "Describes mechanism, not purpose"; check $? "gate names the mechanism failure"
+  grep_flat "$REF/comprehension-gate.md" "Machine-facing residue";       check $? "gate names the machine-residue failure"
+  grep_flat "$REF/comprehension-gate.md" "When in doubt, leave it";      check $? "gate states the leave-it default"
+fi
+
+if [ -f "$REF/diagram-rules.md" ]; then
+  grep_flat "$REF/diagram-rules.md" "72 columns including the comment leader"; check $? "diagram rules state the width budget"
+fi
+
+if [ -f "$REF/receipt-schema.md" ]; then
+  grep_flat "$REF/receipt-schema.md" "lines_after";  check $? "receipt schema documents lines_after"
+  grep_flat "$REF/receipt-schema.md" "end_before = start - 1"; check $? "receipt schema documents the insertion form"
+fi
+
+# No language table may be reintroduced anywhere in the plugin.
+if find "$PLUGIN" -type f -not -path "$PLUGIN/tests/*" -exec grep -liE 'detecting-the-stack|stack-marker' {} + 2>/dev/null | grep -q .; then
+  bad "no stack-detection artefact exists in the plugin"
+else
+  ok "no stack-detection artefact exists in the plugin"
+fi
+
 exit $fail
