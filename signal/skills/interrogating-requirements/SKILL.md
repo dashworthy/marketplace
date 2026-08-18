@@ -1,6 +1,6 @@
 ---
 name: interrogating-requirements
-description: Stage 1 of the signal discovery pipeline, invoked by signal:conducting-discovery in the main thread — interrogates a vague or underspecified request round by round until every coverage dimension (problem, users, success criteria, constraints, scope, existing context) is filled, then runs a scope-expansion beat and writes sections 1 to 6 of brief.md once, complete. It is interactive and cannot run as a dispatched subagent. Runs only as part of the signal pipeline; it does not self-trigger on general feature or build requests.
+description: Stage 1 of the signal discovery pipeline, invoked by signal:conducting-discovery in the main thread — interrogates a vague or underspecified request round by round until every coverage dimension (problem, users, success criteria, constraints, scope, existing context) is filled, then runs a scope-expansion beat and writes sections 1 to 6 of brief.md once, complete. It probes by offering conventional baselines and mining the corrections, and records coverage state and loose ends continuously in open-threads.md so a session that ends early is resumable. It is interactive and cannot run as a dispatched subagent. Runs only as part of the signal pipeline; it does not self-trigger on general feature or build requests.
 ---
 
 # Interrogating Requirements
@@ -33,7 +33,76 @@ You may hand off ONLY when BOTH are true:
 
 Count alone is not enough. Coverage alone is not enough. **Both.**
 
+**Only `filled` satisfies the gate.** You track each dimension in the coverage table
+in `open-threads.md` (see `## Capturing As You Go` below) as `filled`, `thin` or
+`empty`. `thin` means a dimension has an answer that is not yet concrete enough to
+write into `brief.md` — a gap the next round must close, not a weaker form of
+coverage. A coverage table still showing a `thin` or `empty` row means the gate is
+not met.
+
 Each dimension becomes one section of `brief.md`, one for one. There is no intermediate requirements file: what you extract here is what the brief says, in the section named in the right-hand column. Nothing you gather is summarised into a smaller set of sections later, and **nothing you gather is dropped** — a dimension you filled and did not write is extraction thrown away.
+
+## Capturing As You Go — `open-threads.md`
+
+You write a second file into the run directory: `open-threads.md`. It is **working
+state, not the deliverable.** `brief.md` is the deliverable, and nothing about that
+changes.
+
+**Write it during the interrogation, never in a synthesis pass at the end.** A
+session that ends mid-round has already banked what it learned. This is the same
+argument that makes you write `brief.md` §1–§6 the moment the gate is met, applied
+one level earlier: until it is on disk it lives in a conversation that a crash, a
+closed terminal, or a user walking away takes with it.
+
+Update it whenever a dimension moves, a baseline gets corrected, or you notice
+something you are not going to chase this session.
+
+### Shape
+
+```markdown
+# Open Threads — <slug>
+Working state for this run. Not the deliverable; `brief.md` is.
+
+## Coverage So Far
+| Dimension | Status | Established |
+|---|---|---|
+| 1. Problem | filled | Support load from password resets, ~40/wk, felt by the 2-person helpdesk |
+| 2. Users & Stakeholders | thin | Admins named; nobody named as sign-off yet |
+| 3. Success Criteria | empty | — |
+| 4. Constraints | empty | — |
+| 5. Scope | empty | — |
+| 6. Existing Context | empty | — |
+
+## Open Threads
+- [ ] **reset-volume-baseline** — 40/wk was offered with low confidence and never checked
+      *Opened:* 2026-08-18 · *Kind:* unchecked-baseline
+- [ ] **sso-vs-magic-link** — corrected my SSO baseline, never said why magic links were ruled out
+      *Opened:* 2026-08-18 · *Kind:* corrected-not-dug
+```
+
+`Status` is one of `filled`, `thin`, `empty`. `Established` holds what the user
+actually said, in their own words wherever you have them.
+
+### The four thread kinds
+
+| Kind | Means |
+|---|---|
+| `corrected-not-dug` | A baseline was corrected but the reason behind the correction was never mined |
+| `unresolved-conflict` | Two requirements collide and no condition has been found that resolves them |
+| `next-probe` | The obviously-next probe when the session ran out of time |
+| `unchecked-baseline` | A figure or assumption offered with low confidence and never checked |
+
+### Obligations
+
+- **Anything noticed and not pulled goes in before the session ends.** This is not a
+  nicety. It is the single rule that makes a ten-minute session compound instead of
+  accumulate.
+- **Close a thread by checking it off and moving what it produced into the coverage
+  table.** Never delete it. The record of what was dangling is what makes the next
+  session cheap.
+- **Never write `brief.md` content here, and never write threads into `brief.md`.**
+  Two files, two jobs. §5 may point at a deferred expansion candidate's thread
+  handle; that pointer is the only crossing.
 
 ## How to Interrogate
 
