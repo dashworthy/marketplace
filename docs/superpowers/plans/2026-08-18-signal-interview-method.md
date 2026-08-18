@@ -631,7 +631,7 @@ git commit -m "feat(signal): DEFER as a third expansion disposition, traced in t
 
 **Interfaces:**
 - Consumes: `## Returning Sessions` from Task 4; `open-threads.md` from Task 1.
-- Produces: the run-directory layout listing `open-threads.md`, which Task 8's README must match verbatim.
+- Produces: the run-directory layout listing `open-threads.md`. Task 8's README block describes the same three files; the two blocks are not byte-identical — the README's carries extra explanatory comment lines — and must not be forced to match.
 
 - [ ] **Step 1: Write the assertions**
 
@@ -772,10 +772,41 @@ Insert immediately after it:
 - Telling the user a pre-gate run was lost when `open-threads.md` is on disk. It was not.
 ```
 
+- [ ] **Step 10a: Update the conductor's two-disposition wording**
+
+Task 5 made dispositions three; two statements of the old binary live in this file and must move with it.
+
+Find this exact line in the `dot` block:
+
+```
+    "User adjudicates every candidate" -> "Rewrite brief.md §1–§6 — dispositions, or why there were none" [label="every candidate IN-SCOPE or NON-GOAL"];
+```
+
+Replace with:
+
+```
+    "User adjudicates every candidate" -> "Rewrite brief.md §1–§6 — dispositions, or why there were none" [label="every candidate IN-SCOPE, NON-GOAL or DEFER"];
+```
+
+Then find this exact red-flag line:
+
+```markdown
+- Advancing out of stage 1 with an unadjudicated expansion candidate, or writing §5 with a candidate missing from both the in-scope list and the non-goals list. Every candidate is IN-SCOPE or NON-GOAL, and every one leaves a trace in §5.
+```
+
+Replace with:
+
+```markdown
+- Advancing out of stage 1 with an unadjudicated expansion candidate, or writing §5 with a candidate missing from all three of its lists. Every candidate is IN-SCOPE, NON-GOAL or DEFER, and every one leaves a trace in §5 — a deferred one leaves a second trace in `open-threads.md`.
+```
+
 - [ ] **Step 11: Run the assertions to verify they pass**
 
 Run: `check6`
 Expected: four `PASS` lines.
+
+Also run: `grep -Fc 'IN-SCOPE or NON-GOAL' signal/skills/conducting-discovery/SKILL.md`
+Expected: `0`.
 
 - [ ] **Step 12: Verify the release list renumbered cleanly**
 
@@ -1055,6 +1086,20 @@ Replace with:
 It reads §1–§6 and `open-threads.md`, and edits neither;
 ```
 
+- [ ] **Step 8a: Update the mermaid adjudication node**
+
+Find this exact line in the mermaid block:
+
+```
+        EXP --> ADJ["You adjudicate every candidate:<br/>IN-SCOPE or NON-GOAL, with a reason"]
+```
+
+Replace with:
+
+```
+        EXP --> ADJ["You adjudicate every candidate:<br/>IN-SCOPE, NON-GOAL or DEFER, with a reason"]
+```
+
 - [ ] **Step 9: Update the command file**
 
 In `signal/commands/signal.md`, find this exact sentence:
@@ -1136,7 +1181,7 @@ Expected: one hit.
 
 - [ ] **Read the changed interrogation skill end to end**
 
-Read `signal/skills/interrogating-requirements/SKILL.md` start to finish. It gained five sections and lost one; confirm it still reads as one document with a single voice, that no section contradicts another, and that the order runs: gate → question form → probe families → capture → returning sessions → readiness → escape valve → pushback → write-first → expansion beat → output → red flags → rationalizations.
+Read `signal/skills/interrogating-requirements/SKILL.md` start to finish. It gained five sections and lost one; confirm it still reads as one document with a single voice, that no section contradicts another, and that the order runs: gate → capture → question form → probe families → returning sessions → readiness → escape valve → pushback → write-first → expansion beat → output → red flags → rationalizations.
 
 - [ ] **Confirm nothing outside signal changed**
 
