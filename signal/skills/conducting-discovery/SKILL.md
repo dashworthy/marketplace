@@ -68,7 +68,7 @@ Run artifacts live at `.signal/runs/<YYYY-MM-DD>-<slug>/` in the **user's** proj
 
 **If the directory already exists**, report it and ask the user whether to resume the existing run or start fresh under `<slug>-2`. **Never silently overwrite a prior run.**
 
-**What resume means.** There are two stages and one artifact, so resuming is a two-line decision:
+**What resume means.** There are two stages and one artifact, so resuming is a short table lookup:
 
 | What is on disk | What you do |
 |---|---|
@@ -208,7 +208,7 @@ If the pipeline ran **inline** because subagent dispatch was unavailable, say so
 | No baseline count exists (resumed run, stage 1 did not run) | The check is unavailable, not passed. Release only after saying so explicitly. |
 | Subagent returns a malformed RETURN block | Re-dispatch once with the contract restated. On a second failure: halt for stage 2, degrade for `expanding-scope`. |
 | `brief.md` missing at release despite `status: OK` | Halt and escalate. Never report a path to a file that is not there. |
-| User abandons mid-run | Artifacts remain on disk. **Stage 1 writes `brief.md` §1–§6 as soon as the advancement gate is met**, so an interrogation that got that far survives — what is on disk is a real brief whose §5 says scope is unsettled. Abandoned before the gate, `open-threads.md` survives with whatever coverage and threads stage 1 had banked, so the next run resumes warm rather than cold. Only a run abandoned before the first answer leaves nothing but `00-request.md`. Say which of the two happened rather than letting the user guess. |
+| User abandons mid-run | Artifacts remain on disk. **Stage 1 writes `brief.md` §1–§6 as soon as the advancement gate is met**, so an interrogation that got that far survives — what is on disk is a real brief whose §5 says scope is unsettled. Abandoned before the gate, `open-threads.md` survives with whatever coverage and threads stage 1 had banked, so the next run resumes warm rather than cold. Only a run abandoned before the first answer leaves nothing but `00-request.md`. Say which of the three happened rather than letting the user guess. |
 | No web/subagent capability | Signal requires subagent dispatch. If unavailable, run each stage inline in the main thread and say so — degraded context purity. |
 
 **On the no-subagent case:** running inline is a degradation you announce, not a silent fallback. Tell the user that context purity is degraded because the work is running in your thread. Never let a missing subagent capability skip a stage — a skipped stage is a worse failure than a dirty context. Stages 1 and 2 produce the same artifacts inline; only your context suffers.
@@ -233,7 +233,7 @@ If the pipeline ran **inline** because subagent dispatch was unavailable, say so
 - Exiting through the escape valve without recording the trivial exit in `00-request.md`.
 - Dispatching `signal:expanding-scope` before stage 1 has written `brief.md` §1–§6. The write comes first — that ordering is what makes a failed expansion cheap.
 - Going to stage 2 with §5 still saying expansion has not run. It has — successfully, emptily, or not at all — and §5 must say which. The rewrite is not conditional on candidates existing.
-- Telling a user that a resumed run picks up where they left off when no `brief.md` exists. It does not; that run never reached the advancement gate, so nothing was written and the questions start again.
+- Telling a user that a resumed run picks up where they left off when neither `brief.md` nor `open-threads.md` exists. It does not; that run never reached the advancement gate and banked nothing, so the questions start again. With `open-threads.md` on disk the opposite holds — see the warm-resume row above.
 - Inferring a resumed run's stage from what is on disk instead of asking the user.
 - Treating `open-threads.md` as off-limits. Stage 1 wrote it in your session; it is a main-thread file like `00-request.md`, and refusing to read it breaks warm resume for no gain.
 - Reading `open-threads.md` and then summarising the threads to the user at release. Report the path and the count.
