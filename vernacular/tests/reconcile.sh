@@ -263,4 +263,40 @@ cat > "$RUN/receipts/sync.py.json" <<EOF
 EOF
 expect "a claimed range containing singular Sphinx fields fails proof 2" 1
 
+# --- J. a claimed insertion range containing a NEW @param must be rejected ----
+# Nothing in proof 1 forbids writing an annotation into a range that had none
+# before the rewrite - the before-scan in proof 2 cannot see it, because there
+# was nothing there to see. This is the gap: a rewriter that broke its own
+# prose-only rule and inserted a tag on a previously-bare symbol must still
+# fail reconcile, or invariant 1 is unenforced for every insertion.
+
+newcase
+cat > "$RUN/before/Untagged.php" <<'EOF'
+<?php
+class Billing {
+    public function charge(int $amount): void {
+        $this->gateway->charge($amount);
+    }
+}
+EOF
+cat > "$WORK/Untagged.php" <<'EOF'
+<?php
+class Billing {
+    /**
+     * Takes payment for an order that has already been priced.
+     * @param int $amount
+     */
+    public function charge(int $amount): void {
+        $this->gateway->charge($amount);
+    }
+}
+EOF
+cat > "$RUN/receipts/Untagged.php.json" <<EOF
+{"file": "$WORK/Untagged.php",
+ "before": "$RUN/before/Untagged.php",
+ "edits": [{"start": 3, "end_before": 2, "lines_after": 4}],
+ "left_alone": 0}
+EOF
+expect "a claimed range with a newly-written @param fails proof 2" 1
+
 exit $fail

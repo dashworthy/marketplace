@@ -15,6 +15,7 @@ Then install whichever plugins you want:
 ```
 /plugin install signal@dashworthy
 /plugin install verity@dashworthy
+/plugin install vernacular@dashworthy
 ```
 
 ## Plugins
@@ -38,7 +39,9 @@ development-skills/
 ├── .claude-plugin/marketplace.json   the dashworthy marketplace
 ├── signal/                           one plugin
 │   └── .claude-plugin/plugin.json
-└── verity/                           another
+├── verity/                           another
+│   └── .claude-plugin/plugin.json
+└── vernacular/                       and another
     └── .claude-plugin/plugin.json
 ```
 

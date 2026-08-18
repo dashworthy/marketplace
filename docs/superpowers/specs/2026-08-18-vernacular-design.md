@@ -238,8 +238,9 @@ offending paths — never file content.
 **Proof 1 — nothing outside the claimed ranges moved.** Delete every claimed range from the
 `before/` copy and from the working-tree file. The remainders must be byte-identical.
 
-**Proof 2 — no structured annotation was inside a claimed range.** Scan the **before** file's
-claimed ranges for annotation lines. One hit halts the run.
+**Proof 2 — no structured annotation was inside a claimed range, before the rewrite or after
+it.** Scan the **before** file's claimed ranges for annotation lines, then scan the **after**
+file's claimed ranges for annotation lines. One hit, in either scan, halts the run.
 
 An **annotation line** is one whose first non-whitespace content, after an optional comment
 leader (`*`, `#`, `//`, `///`, `--`), begins with `@`, or matches a Sphinx field (`:param`,
@@ -253,13 +254,22 @@ one docblock left un-rewritten, which the report names under **Skipped**. A fals
 costs a mangled annotation in the user's source. Widen this pattern freely; never narrow it
 to catch a few more docblocks.
 
-Proof 2 is checked against the before file deliberately. That makes it a **precondition on
-the ranges** rather than a comparison of two states: the rewriter cannot have altered a tag,
-because a range containing one was never legal to claim. There is no window in which a tag
-is edited and then detected.
+The before-scan is checked against the before file deliberately. That makes it a
+**precondition on the ranges** rather than a comparison of two states: the rewriter cannot
+have altered an existing tag, because a range containing one was never legal to claim. There
+is no window in which a tag is edited and then detected.
 
-Together the two proofs discharge invariants 1 and 2 without the tool knowing what language
-it is looking at.
+The after-scan catches what the before-scan cannot see: a claimed range that carried no
+annotation before the rewrite but carries one after it — a tag the rewriter wrote into a range
+that had none. Proof 1 alone does not forbid this; it only proves the *rest* of the file is
+untouched, and says nothing about what a claimed range is allowed to contain. The rewriter
+writes prose only and never a structured annotation, on any symbol, so no legal output can
+contain one inside a claimed after-range — the after-scan is sound by construction, not a
+heuristic, the same way the before-scan is. Invariant 1 needs both: the before-scan stops an
+existing tag being altered or deleted, the after-scan stops a new one being written.
+
+Together the two scans of Proof 2, alongside Proof 1, discharge invariants 1 and 2 without the
+tool knowing what language it is looking at.
 
 ### On failure
 

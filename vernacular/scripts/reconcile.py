@@ -111,16 +111,30 @@ def check_receipt(path):
             return "malformed", f"overlapping claimed ranges at before-line {b_start}"
         prev_end = max(prev_end, b_end)
 
-    # Proof 2 is checked against the BEFORE file, which makes it a precondition
-    # on the ranges rather than a comparison of two states: a range containing
-    # an annotation was never legal to claim, so there is no window in which a
-    # tag is edited and then detected.
+    # Proof 2 is two scans, and both are needed. The BEFORE scan is checked
+    # against the file as it stood before the rewrite, which makes it a
+    # precondition on the ranges rather than a comparison of two states: a
+    # range containing an annotation was never legal to claim, so there is no
+    # window in which an existing tag is edited and then detected. The AFTER
+    # scan catches the case the before scan cannot: a range that had no
+    # annotation before the rewrite but has one after it, i.e. a tag the
+    # rewriter wrote. The rewriter writes prose only and never a tag, so no
+    # legal output can contain an annotation inside a claimed after-range —
+    # this check is sound by construction, not a heuristic.
     for b_start, b_end, _, _ in spans:
         hit = annotation_in_range(before_lines, b_start, b_end)
         if hit is not None:
             return "fail", (
                 f"proof2 annotation at line {hit} inside claimed range "
                 f"{b_start}-{b_end}"
+            )
+
+    for _, _, a_start, a_end in spans:
+        hit = annotation_in_range(after_lines, a_start, a_end)
+        if hit is not None:
+            return "fail", (
+                f"proof2 annotation WRITTEN at line {hit} inside claimed range "
+                f"{a_start}-{a_end}"
             )
 
     before_rest = strip(before_lines, [(b0, b1) for b0, b1, _, _ in spans])
