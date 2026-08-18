@@ -89,7 +89,7 @@ actually said, in their own words wherever you have them.
 |---|---|
 | `corrected-not-dug` | A baseline was corrected but the reason behind the correction was never mined |
 | `unresolved-conflict` | Two requirements collide and no condition has been found that resolves them |
-| `next-probe` | The obviously-next probe when the session ran out of time |
+| `next-probe` | Something identified as worth pursuing but not pursued — the obviously-next probe when the session ran out of time, or an expansion candidate the user deferred |
 | `unchecked-baseline` | A figure or assumption offered with low confidence and never checked |
 
 ### Obligations
