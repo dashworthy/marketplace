@@ -1,7 +1,7 @@
 {
   "name": "signal",
   "description": "Discovery pipeline: interrogate requirements with a scope-expansion beat, then sequence them into a dependency-ordered brief for handoff. Produces a brief and stops — it does not design, plan, or build.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Andrew Leach",
     "email": "7387639+andyleach@users.noreply.github.com"

@@ -9,7 +9,7 @@
     {
       "name": "signal",
       "description": "Discovery pipeline: interrogate requirements, then sequence them into a dependency-ordered brief for handoff.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "source": "./signal",
       "author": {
         "name": "Andrew Leach",

@@ -1,6 +1,6 @@
 ---
 name: expanding-scope
-description: A dispatched beat within stage 1 of the signal discovery pipeline, invoked by signal:conducting-discovery — reads the draft requirements supplied inline in its dispatch prompt and surfaces what the requester never thought to say, an adjacent capability, a bigger framing of the same problem, and something undervalued in the current scope, as at most five one-line candidates for the user to accept or reject. Runs only as part of the signal pipeline, dispatched by the conductor; it does not self-trigger on general feature or build requests.
+description: A dispatched beat within stage 1 of the signal discovery pipeline, invoked by signal:conducting-discovery — reads the draft requirements supplied inline in its dispatch prompt and surfaces what the requester never thought to say, an adjacent capability, a bigger framing of the same problem, and something undervalued in the current scope, as at most five one-line candidates for the user to rule in scope, out of scope, or defer. Runs only as part of the signal pipeline, dispatched by the conductor; it does not self-trigger on general feature or build requests.
 ---
 
 # Expanding Scope
@@ -8,6 +8,8 @@ description: A dispatched beat within stage 1 of the signal discovery pipeline, 
 ## Overview
 
 **Your input is the draft requirements text in your dispatch prompt, not a file path.** Stage 1 runs in the conductor's own session and has not written any file yet — `brief.md` does not exist while you are running. It hands you the six dimensions as they stand. Do not go looking on disk for them.
+
+**Dispositions are three — IN-SCOPE, NON-GOAL, DEFER — and none of them are yours.** You propose; stage 1 records what the user decides. Do not shape a candidate to make one disposition likelier.
 
 Your only job is to surface what the requester never thought to say. You are a divergent counterweight to an interrogation that has spent several rounds narrowing. You propose; you never decide.
 

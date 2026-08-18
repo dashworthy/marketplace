@@ -19,8 +19,9 @@ The marketplace namespace is `dashworthy`, but it does not appear in skill IDs. 
 
 Here is what to expect, honestly:
 
-- **An interrogation you must actually answer.** signal will not hand off on a vague request. It asks one sharp question at a time, and it will not advance until it has asked at least 3 rounds of questions *and* filled all six coverage dimensions (problem, users, success criteria, constraints, scope boundaries, existing context). "Whatever makes sense" is not an answer it accepts. If your request is genuinely trivial — a rename, a config tweak — it says so in one sentence and exits without producing a brief; otherwise, budget for a real back-and-forth.
-- **An expansion checklist.** Once the dimensions are filled, signal dispatches a subagent to propose up to 5 things you never thought to ask for — an adjacent capability, a bigger framing, something undervalued in what you scoped. You accept or reject each one in a single round. Nothing reaches the brief undecided: what you accept is written in as a requirement, what you reject is written into the non-goals list with your reason. If that subagent fails, signal says so and carries on without candidates — a narrower brief, not a lost interrogation.
+- **An interrogation you must actually answer.** signal will not hand off on a vague request. It asks one question at a time, and it asks by offering you the **conventional answer** — what most people in your position would do, with its reasoning visible — and inviting you to correct it. Agreeing is cheap and moves things along; correcting it is where the real requirements come from, and every correction gets mined for the reason behind it. It will not advance until it has run at least 3 rounds *and* filled all six coverage dimensions (problem, users, success criteria, constraints, scope boundaries, existing context). "Whatever makes sense" is not an answer it accepts. If your request is genuinely trivial — a rename, a config tweak — it says so in one sentence and exits without producing a brief; otherwise, budget for a real back-and-forth.
+- **A session you can end whenever you like.** Signal writes `open-threads.md` as it goes: a coverage table of what is established, and a list of what it noticed and did not chase. Ending early does not lose the interrogation — the next run opens by offering you those threads, and never re-asks a dimension already banked. The gate is unchanged, so no brief ships until the six dimensions are genuinely filled; what changes is that getting there can take two sittings instead of one. Open threads accumulate and nothing expires them, so a long-lived run's thread list is the interrogator's to keep pruned.
+- **An expansion checklist.** Once the dimensions are filled, signal dispatches a subagent to propose up to 5 things you never thought to ask for — an adjacent capability, a bigger framing, something undervalued in what you scoped. You accept, reject, or defer each one in a single round. Nothing reaches the brief undecided: what you accept is written in as a requirement, what you reject is written into the non-goals list with your reason, and what you genuinely cannot call yet is deferred — named in the brief and opened as a thread in `open-threads.md`, so it is tracked rather than fudged into a rejection. If that subagent fails, signal says so and carries on without candidates — a narrower brief, not a lost interrogation.
 - **A brief, once the above is settled.** Written to `.signal/runs/<date>-<slug>/brief.md` — your answers as §1–§6, then a dependency-ordered body and a handoff pointer appended as §7–§8. It is released to you as soon as it is written; nothing reviews it first, and the only check on it is the interrogation that produced it.
 
 Then signal stops. It does not offer to build the thing.
@@ -36,11 +37,12 @@ flowchart TD
     TRIAGE -->|no| S1
 
     subgraph S1G ["Stage 1 · Interrogate — your session, interactive"]
-        S1["Interrogation rounds"] --> GATE{"Advancement gate:<br/>3+ rounds AND all six<br/>coverage dimensions filled"}
+        S1["Interrogation rounds<br/>baseline offered, correction mined"] --> OT["open-threads.md updated<br/>coverage table + loose ends"]
+        OT --> GATE{"Advancement gate:<br/>3+ rounds AND all six<br/>coverage dimensions filled"}
         GATE -->|not met| S1
         GATE -->|met| W1["Write brief.md §1–§6<br/>your answers are durable from here"]
         W1 --> EXP["Dispatch expanding-scope<br/>returns at most 5 candidates"]
-        EXP --> ADJ["You adjudicate every candidate:<br/>IN-SCOPE or NON-GOAL, with a reason"]
+        EXP --> ADJ["You adjudicate every candidate:<br/>IN-SCOPE, NON-GOAL or DEFER, with a reason"]
         EXP -.->|"found nothing, or failed"| W2
         ADJ --> W2["Rewrite brief.md §1–§6<br/>dispositions, or why there were none"]
     end
@@ -50,12 +52,12 @@ flowchart TD
     S2 -->|OK| RELEASE["Release brief.md — signal stops"]
 ```
 
-The expansion beat is the part people miss. It runs *before* the requirements are written down, because "what else could this be?" is scope definition while you're still in the room and scope creep once the brief exists. Every candidate must resolve one way or the other — nothing reaches the brief undisposed.
+The expansion beat is the part people miss. It runs after the requirements are first written down and before they are rewritten with your dispositions, because "what else could this be?" is scope definition while you're still in the room and scope creep once the brief is finalized. Every candidate must resolve one way or the other — nothing reaches the brief undisposed.
 
 | Stage | Runs where | Produces |
 |---|---|---|
-| 1. Interrogate | Main thread (interactive) | `brief.md` **§1–§6** — one section per coverage dimension, written straight into the deliverable: §1 Problem, §2 Users & Stakeholders, §3 Success Criteria, §4 Constraints, §5 Scope, §6 Existing Context. Every expansion candidate is resolved into §5's in-scope list or its non-goals with your reason. Includes the scope-expansion beat: a dispatched `signal:expanding-scope` subagent is handed the draft requirements inline and proposes candidates in its return value only — it writes no file. Written once, after adjudication, already complete. |
-| 2. Sequence | Dispatched subagent (`signal:sequencing-requirements`) | `brief.md` **§7–§8**, appended — §7 The Work, In Dependency Order (ordered so nothing appears before what it depends on) and §8 How to Consume This Brief. It reads §1–§6 and never edits them; if it thinks a requirement section is wrong it returns `BLOCKED` rather than fixing it. |
+| 1. Interrogate | Main thread (interactive) | `brief.md` **§1–§6** — one section per coverage dimension, written straight into the deliverable: §1 Problem, §2 Users & Stakeholders, §3 Success Criteria, §4 Constraints, §5 Scope, §6 Existing Context. Every expansion candidate is resolved into §5's in-scope list, its non-goals with your reason, or its deferred list. Includes the scope-expansion beat: a dispatched `signal:expanding-scope` subagent is handed the draft requirements inline and proposes candidates in its return value only — it writes no file. Written twice: the moment the gate is met, before expansion runs, then rewritten after adjudication. |
+| 2. Sequence | Dispatched subagent (`signal:sequencing-requirements`) | `brief.md` **§7–§8**, appended — §7 The Work, In Dependency Order (ordered so nothing appears before what it depends on) and §8 How to Consume This Brief. It reads §1–§6 and `open-threads.md`, and edits neither; if it thinks a requirement section is wrong it returns `BLOCKED` rather than fixing it. |
 
 Because the brief is one file in two states, a **resumed** run does not guess. If `brief.md` is absent, signal starts at stage 1. If it exists, signal asks whether to re-run stage 2 against it or start over at stage 1 — it does not read the brief to work that out for itself.
 
@@ -75,6 +77,8 @@ Every run writes to `.signal/runs/<YYYY-MM-DD>-<slug>/` in **your project**, not
 
 ```
 00-request.md            the raw request, verbatim (written by the conductor)
+open-threads.md          working state — the coverage table and what is still unresolved
+                         written continuously during the interrogation, by stage 1
 brief.md                 THE deliverable — unnumbered so it is trivially findable
                          §1–§6 written by stage 1, §7–§8 appended by stage 2
 ```
@@ -83,7 +87,7 @@ brief.md                 THE deliverable — unnumbered so it is trivially finda
 
 **Your answers are on disk as soon as the interrogation finishes.** Stage 1 writes `brief.md` §1–§6 the moment the advancement gate is met — before the expansion beat, before any subagent runs, before anything can fail. It then rewrites those same sections after you adjudicate, folding the dispositions in. Same file, same writer, second write replaces the first. The reason for the early write is blunt: the interrogation is the part that cost *you* time, and until it is written down it exists only in a conversation that a crash or a failed dispatch takes with it. Everything after it is cheap to redo.
 
-**Re-running against an existing run.** If the directory already exists, signal asks whether to resume it or start fresh under a `-2` suffix; it never silently overwrites. Resuming with a `brief.md` present means choosing whether to re-run stage 2 against it or start over at stage 1 — signal asks rather than inspecting the file, because it is not allowed to read it. If there is no `brief.md`, the earlier run never reached the advancement gate, so there was nothing to save. And a request that exited through the trivial escape valve is recorded as such in `00-request.md`, so re-running the same slug tells you it was already judged trivial instead of quietly asking again.
+**Re-running against an existing run.** If the directory already exists, signal asks whether to resume it or start fresh under a `-2` suffix; it never silently overwrites. Resuming with a `brief.md` present means choosing whether to re-run stage 2 against it or start over at stage 1 — signal asks rather than inspecting the file, because it is not allowed to read it. If there is no `brief.md`, the earlier run never reached the advancement gate — but `open-threads.md` will usually still be there, so resuming picks up the coverage table and the open threads instead of starting cold. Only a run abandoned before the first answer leaves nothing to resume from. And a request that exited through the trivial escape valve is recorded as such in `00-request.md`, so re-running the same slug tells you it was already judged trivial instead of quietly asking again.
 
 
 ## License
