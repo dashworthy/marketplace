@@ -74,7 +74,7 @@ Each component states five fields:
 - **Depends on** — which earlier components it needs, by name.
 - **Why it follows** — what specifically it needs from its prerequisites, not just that it needs them.
 - **Inputs / outputs** — its interface, stated in a sentence.
-- **Open risks** — what is still uncertain about it. Where an uncertainty is already tracked as an open thread, cite it by its handle — "unresolved: `sso-vs-magic-link`" — rather than restating it. A §5 deferred candidate that bears on this component belongs here, cited the same way.
+- **Open risks** — what is still uncertain about it. Where an uncertainty is already tracked as an open thread, cite it by its handle — "unresolved: `sso-vs-magic-link`" — rather than restating it. A §5 deferred candidate that bears on this component belongs here, cited the same way. When `open-threads.md` is present and a dimension this component rests on is marked `filled (baseline, agreed)` in its coverage table, that is a legitimate open risk to name — the requirement holds only as far as a conventional baseline the user did not elaborate.
 
 ## Ordering Rules
 

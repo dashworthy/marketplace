@@ -33,12 +33,18 @@ You may hand off ONLY when BOTH are true:
 
 Count alone is not enough. Coverage alone is not enough. **Both.**
 
-**Only `filled` satisfies the gate.** You track each dimension in the coverage table
-in `open-threads.md` (see `## Capturing As You Go` below) as `filled`, `thin` or
-`empty`. `thin` means a dimension has an answer that is not yet concrete enough to
+**`filled` and `filled (baseline, agreed)` both satisfy the gate; only `thin` or
+`empty` fail it.** You track each dimension in the coverage table in
+`open-threads.md` (see `## Capturing As You Go` below) as `filled`,
+`filled (baseline, agreed)`, `thin`, or `empty`. The baseline-agreed form is not a
+lesser kind of coverage for gate purposes — it is a full answer whose provenance is
+merely recorded, so a coverage table with every row `filled` or
+`filled (baseline, agreed)` meets the gate exactly as a table of all-`filled` rows
+would. `thin` means a dimension has an answer that is not yet concrete enough to
 write into `brief.md` — a gap the next round must close, not a weaker form of
 coverage. A coverage table still showing a `thin` or `empty` row means the gate is
-not met.
+not met. This does not relax the two-condition rule above: 3+ rounds AND all six
+dimensions at `filled` or `filled (baseline, agreed)`, still both.
 
 Each dimension becomes one section of `brief.md`, one for one. There is no intermediate requirements file: what you extract here is what the brief says, in the section named in the right-hand column. Nothing you gather is summarised into a smaller set of sections later, and **nothing you gather is dropped** — a dimension you filled and did not write is extraction thrown away.
 
@@ -80,8 +86,15 @@ Working state for this run. Not the deliverable; `brief.md` is.
       *Opened:* 2026-08-18 · *Kind:* corrected-not-dug
 ```
 
-`Status` is one of `filled`, `thin`, `empty`. `Established` holds what the user
-actually said, in their own words wherever you have them.
+`Status` is `filled`, `filled (baseline, agreed)`, `thin`, or `empty`. Use
+`filled (baseline, agreed)` for a dimension that reached a concrete answer only
+because you offered the conventional baseline and the user agreed without adding
+anything of their own — the answer is real and it satisfies the gate, but nothing
+of the user's own content backs it, so it is the first place to look when a
+baseline turns out wrong. Plain `filled` is for a dimension the user narrated in
+their own words. `Established` holds what the user actually said in their own words
+wherever you have them; for a `filled (baseline, agreed)` row it holds the baseline
+they agreed to.
 
 ### The four thread kinds
 
@@ -231,6 +244,12 @@ somewhere else entirely.
   what is already banked is the exact thing continuity exists to prevent, and it
   reads as not having listened.
 - **Do re-open a `thin` dimension.** Thin is a gap, not coverage.
+- **A `filled (baseline, agreed)` dimension is the one worth revisiting.** Do not
+  re-ask it mechanically as though it were empty — the user did answer. But offer
+  it back as the softest ground: "last time you agreed X was standard; has anything
+  since made you want to revisit it?" This is where an unexamined baseline you both
+  waved through gets a second chance to be corrected, and it is the only structural
+  guard the pipeline has against it.
 
 ## When They Ask Whether You Have Enough
 
