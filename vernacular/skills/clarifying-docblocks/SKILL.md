@@ -15,7 +15,8 @@ description: Use when rewriting a branch's docblock prose into plain language wi
 
 Rule one is proved by `scripts/reconcile.py`, not asserted. Rule two requires that every read
 happen in a dispatched subagent. When an instruction below appears to conflict with either
-rule, the rule wins and the run halts.
+rule, the rule wins and the run halts. The **one** exception is the no-subagent degradation
+named in `## Error handling`, which is announced to the user rather than taken silently.
 
 ## Pipeline
 
@@ -61,9 +62,20 @@ barrier is reconcile, which needs every receipt.
    git diff --name-only "$BASE"...HEAD
    ```
 
-   Hunk ranges come from `git diff --unified=0 "$BASE"...HEAD -- <path>`, parsed for the
-   **after-side** line numbers. Parsing `@@` headers is not reading the file, and the diff body
-   must not enter this context - request `--unified=0` so there is none to read.
+   Hunk ranges come from the **after-side** line numbers of the diff, and the diff body must never
+   enter this context. `--unified=0` does not achieve that on its own: it removes the unchanged
+   context lines but still prints every changed line, and the `@@` header's own trailing suffix
+   carries the enclosing function's source text. Filter the ranges out before the result can reach
+   you:
+
+   ```sh
+   git diff --unified=0 "$BASE"...HEAD -- <path> \
+     | sed -n 's/^@@ [^@]* +\([0-9]*\(,[0-9]*\)*\) @@.*/\1/p'
+   ```
+
+   That prints `104,28` style tokens — a start line and a length — and nothing else. **Never run a
+   bare `git diff` at any context level**: its output is the user's source, and reading it here is
+   exactly what Rule two forbids.
 3. **Any in-scope file modified relative to `HEAD`** - `git status --porcelain -- <paths>` -
    **halt**, name the files, say commit or stash.
 
@@ -197,7 +209,7 @@ Invoke `superpowers:verification-before-completion` before reporting anything as
 | A verifier returns `BLOCKED` | Restore that file from `before/` and name it under **Skipped**. Unverified prose is never kept. |
 | `reconcile.py` exits 1 or 2 | Restore every touched file, quarantine, halt. |
 | A subagent returns a description instead of a count | Halt. The firewall has failed and the run's context is no longer trustworthy. |
-| No subagent capability | vernacular requires dispatch. Run each file's rewrite and verification inline in this thread and **say so** - context purity is degraded, and the verifier is no longer independent, which is the more serious of the two. Never skip the verification stage to compensate. |
+| No subagent capability | vernacular requires dispatch. Run each file's rewrite and verification inline in this thread and **say so** - **this is the exception to the two rules** - context purity is degraded, and the verifier is no longer independent, which is the more serious of the two. Never skip the verification stage to compensate. |
 
 ## Red flags - STOP
 
@@ -210,6 +222,8 @@ Invoke `superpowers:verification-before-completion` before reporting anything as
 - Continuing past a `reconcile.py` non-zero exit.
 - Reporting without the left-alone count.
 - Writing a config file to save yourself asking next time.
+- Running a bare `git diff` in the conductor's context, at any context level, instead of the
+  filtered form.
 - Reintroducing language detection - a stack table, a docblock-syntax file, a skip list. It was
   considered and deliberately not built; the proofs are language-independent and must stay so.
 - Widening scope to every docblock in a touched file.

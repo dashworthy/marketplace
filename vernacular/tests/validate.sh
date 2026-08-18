@@ -120,6 +120,9 @@ if [ -f "$COND" ]; then
   # Every dispatch payload must name skill_path - the defect guardtower found live.
   grep -c 'skill_path' "$COND" | awk '$1 >= 2 {exit 0} {exit 1}'
   check $? "conductor names skill_path in both dispatch payloads"
+  ! grep_flat "$COND" "so there is none to read"
+  check $? "conductor does not claim --unified=0 removes the diff body"
+  grep_flat "$COND" "Never run a bare"; check $? "conductor forbids the unfiltered git diff"
 fi
 
 exit $fail
