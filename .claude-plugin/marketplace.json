@@ -25,6 +25,16 @@
         "name": "Andrew Leach",
         "email": "7387639+andyleach@users.noreply.github.com"
       }
+    },
+    {
+      "name": "vernacular",
+      "description": "Diff-scoped documentation hardening: rewrites a branch's docblock prose into plain language in place, proving that executable code and structured annotations came out byte-identical.",
+      "version": "0.1.0",
+      "source": "./vernacular",
+      "author": {
+        "name": "Andrew Leach",
+        "email": "7387639+andyleach@users.noreply.github.com"
+      }
     }
   ]
 }
