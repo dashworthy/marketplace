@@ -272,8 +272,8 @@ Runs **after** the coverage dimensions are filled and the first write has landed
 
    **If it returns no candidates at all**, that is a valid `OK` result, not a failure — it found nothing worth proposing. There is nothing to adjudicate, so go to step 5 directly. You still rewrite, for the same reason.
 3. You present all candidates to the user as a single accept/reject checklist — one round, not a per-candidate conversation.
-4. **Every candidate must resolve to IN-SCOPE or NON-GOAL, with the user's reason.** An unresolved candidate never reaches the brief.
-5. **Then rewrite `brief.md` §1–§6 in full**, replacing what you wrote before rather than patching it. The rewritten sections carry every disposition: accepted candidates are requirements in their own right, so write each into §5's in-scope list *and* into whichever other sections it touches — §3 success criteria, §4 constraints, §2 stakeholders — as though it had been raised during interrogation. Rejected candidates go into §5's non-goals list *with the user's reason*, so the brief records what was considered and declined, not only what survived. A candidate that does not reach these sections does not reach the brief at all, and nothing downstream will catch it.
+4. **Every candidate must resolve to IN-SCOPE, NON-GOAL, or DEFER, with the user's reason.** An unresolved candidate never reaches the brief. DEFER is for a candidate the user genuinely cannot decide on yet: it is written to `open-threads.md` as kind `next-probe` **and** named in §5's deferred list. Two traces, not zero. DEFER is not a way to dodge adjudicating — it is itself a disposition, and a candidate the user simply does not want is a NON-GOAL with a reason, exactly as before.
+5. **Then rewrite `brief.md` §1–§6 in full**, replacing what you wrote before rather than patching it. The rewritten sections carry every disposition: accepted candidates are requirements in their own right, so write each into §5's in-scope list *and* into whichever other sections it touches — §3 success criteria, §4 constraints, §2 stakeholders — as though it had been raised during interrogation. Rejected candidates go into §5's non-goals list *with the user's reason*, so the brief records what was considered and declined, not only what survived. Deferred candidates go into §5's deferred list with their thread handle from `open-threads.md`, so a reader can tell what is genuinely still open from what was settled. A candidate that does not reach these sections does not reach the brief at all, and nothing downstream will catch it.
 
    **This step runs on every path out of the beat, and its first job is always the same: §5's provisional note must go.** The first write left §5 saying expansion had not run yet. That sentence is true for exactly as long as it takes to dispatch, and shipping it is telling the reader something false about how settled the scope is. Replace it with whichever of these actually happened:
    - **Candidates adjudicated** — the dispositions themselves, per the paragraph above.
@@ -292,12 +292,12 @@ Write `brief.md` into the run directory supplied by the conductor, with exactly 
 | 2 | **Users & Stakeholders** — who uses it, who's affected, who signs off |
 | 3 | **Success Criteria** — measurable or observable only; no aspirational prose |
 | 4 | **Constraints** — stack, timeline, budget, compliance, integrations, non-negotiables |
-| 5 | **Scope** — what's in; and **non-goals**, each with the user's reason |
+| 5 | **Scope** — what's in; **non-goals**, each with the user's reason; and **deferred**, each with its `open-threads.md` thread handle |
 | 6 | **Existing Context** — prior art, current workarounds, systems this must fit into |
 
 **Note for §3:** measurable or observable only. If a criterion cannot actually be checked, it is not a success criterion — say so to the user rather than silently keep it in the list. Do not soften an unmeasurable aspiration into prose and let it pass as a criterion.
 
-**Note for §5, and it is not optional:** **every** accepted expansion candidate appears in the in-scope list, and **every** rejected one appears in the non-goals list with the user's stated reason. Not a summary of them — every one. An omitted rejected candidate is a broken audit trail; an omitted accepted one silently drops a requirement the user explicitly asked for. Both dispositions are obligations; neither is left to your judgement.
+**Note for §5, and it is not optional:** **every** accepted expansion candidate appears in the in-scope list, **every** rejected one appears in the non-goals list with the user's stated reason, and **every** deferred one appears in the deferred list with its thread handle. Not a summary of them — every one. An omitted rejected candidate is a broken audit trail; an omitted accepted one silently drops a requirement the user explicitly asked for. Both dispositions are obligations; neither is left to your judgement.
 
 **Note for §6:** this section exists because the interrogation forced an answer for it. Prior art, current workarounds and the systems this must fit into are what stop a downstream builder rebuilding something that already exists. Write what the user actually told you; do not fold it into §4 constraints and do not leave it out because it "isn't a requirement".
 
@@ -324,7 +324,8 @@ Then hand control back to `signal:conducting-discovery`.
 - Advancing with an unadjudicated expansion candidate
 - Handing back with §5 still saying expansion has not run, when it has
 - Patching the first write instead of replacing §1–§6 in full after adjudication
-- Writing `brief.md` with a candidate that appears in neither §5's in-scope list nor its non-goals list
+- Writing `brief.md` with a candidate that appears in none of §5's three lists — in-scope, non-goals, deferred
+- Recording a candidate as deferred in §5 without opening the matching `next-probe` thread in `open-threads.md`. Deferred means two traces; one is a dropped requirement wearing a disposition.
 - Carrying a success criterion into §3 that cannot actually be measured
 - A filled coverage dimension that reached no section — §6 Existing Context in particular, which is the easiest one to gather and then forget to write
 - Writing §7 or §8, or ordering the work by dependency. That is stage 2's.
