@@ -6,3 +6,4 @@
 # settings.local.json stays personal: it holds machine-specific absolute paths.
 .claude/settings.local.json
 signal/docs/
+.superpowers/
