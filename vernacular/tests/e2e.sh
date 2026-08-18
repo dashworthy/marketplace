@@ -289,26 +289,6 @@ if [ "$marketplace_state" != "absent" ] || [ "$plugin_state" != "absent" ]; then
   exit 2
 fi
 
-# Installing is infrastructure, not behavior. If either of these fails - a network blip, a changed
-# `claude plugin` interface, a malformed marketplace.json - then every check below fails for a
-# reason that has nothing to do with the plugin's behavior, and the first one reports as
-# "FAIL - command is discoverable after install": an infrastructure error misattributed as a
-# behavioral regression, which is the exact confusion the three-state grading everywhere else in
-# this script exists to prevent. Their exit status was previously discarded (`>/dev/null 2>&1` with
-# no test), so that misattribution was silent. Grade a non-zero exit INCONCLUSIVE (2) instead, and
-# print the output rather than swallowing it, so the reason is on the log. `trap cleanup EXIT` is
-# already installed above, so exiting here still uninstalls/removes whatever this run did add.
-if ! install_out=$(claude plugin marketplace add "$ROOT" --scope local 2>&1); then
-  printf 'NOTE - `claude plugin marketplace add` exited non-zero:\n%s\n' "$install_out"
-  printf '\nINCONCLUSIVE - could not add the dashworthy marketplace; no check below can reach a behavioral result, so this run does not confirm a regression.\n'
-  exit 2
-fi
-if ! install_out=$(claude plugin install vernacular@dashworthy --scope local 2>&1); then
-  printf 'NOTE - `claude plugin install vernacular@dashworthy` exited non-zero:\n%s\n' "$install_out"
-  printf '\nINCONCLUSIVE - could not install vernacular@dashworthy; no check below can reach a behavioral result, so this run does not confirm a regression.\n'
-  exit 2
-fi
-
 mkdir -p "$TMP/proj" && cd "$TMP/proj" && git init -q
 git config user.email t@example.com && git config user.name t
 mkdir -p src
@@ -324,9 +304,42 @@ class Billing {
 EOF
 git add src/Billing.php && git commit -qm init
 
-# 1. The command must be discoverable.
+# Installing is infrastructure, not behavior. If either of these fails - a network blip, a changed
+# `claude plugin` interface, a malformed marketplace.json - then every check below fails for a
+# reason that has nothing to do with the plugin's behavior, and the first one reports as
+# "FAIL - command is discoverable after install": an infrastructure error misattributed as a
+# behavioral regression, which is the exact confusion the three-state grading everywhere else in
+# this script exists to prevent. Their exit status was previously discarded (`>/dev/null 2>&1` with
+# no test), so that misattribution was silent. Grade a non-zero exit INCONCLUSIVE (2) instead, and
+# print the output rather than swallowing it, so the reason is on the log. `trap cleanup EXIT` is
+# already installed above, so exiting here still uninstalls/removes whatever this run did add.
+#
+# Deliberately AFTER the `cd "$TMP/proj"` above, not before it: `--scope local` keys the
+# registration to the working directory at install time (confirmed against a real entry in this
+# machine's own ~/.claude/plugins/installed_plugins.json). Installing before the `cd` would attach
+# the registration to whatever directory the script was invoked from - the real repo, not the
+# ephemeral scratch project - and cleanup() below `cd`s into "$TMP/proj" before uninstalling, so it
+# would then look in the wrong place on every normal exit path and leave a permanent leak in the
+# user's global registry: exactly the leak the ownership snapshot above exists to prevent.
+if ! install_out=$(claude plugin marketplace add "$ROOT" --scope local 2>&1); then
+  printf 'NOTE - `claude plugin marketplace add` exited non-zero:\n%s\n' "$install_out"
+  printf '\nINCONCLUSIVE - could not add the dashworthy marketplace; no check below can reach a behavioral result, so this run does not confirm a regression.\n'
+  exit 2
+fi
+if ! install_out=$(claude plugin install vernacular@dashworthy --scope local 2>&1); then
+  printf 'NOTE - `claude plugin install vernacular@dashworthy` exited non-zero:\n%s\n' "$install_out"
+  printf '\nINCONCLUSIVE - could not install vernacular@dashworthy; no check below can reach a behavioral result, so this run does not confirm a regression.\n'
+  exit 2
+fi
+
+# 1. The command must be discoverable. The prompt deliberately does NOT name "vernacular" - the
+#    plugin and its one command share that exact name, so a prompt supplying it would let a
+#    coherent non-answer ("I don't see any commands from the vernacular plugin") satisfy the
+#    'vernacular' pattern below by echoing the question back, not by actually finding the command.
+#    Ask about installed-plugin commands generally instead, so a match is real evidence the command
+#    was discovered. Do not put the plugin name back in this prompt.
 run_with_quorum 'vernacular' \
-  claude -p "List the slash commands available from the vernacular plugin. Names only." \
+  claude -p "List the slash commands available from your installed plugins. Names only." \
   --model claude-haiku-4-5-20251001
 case "$qr_result" in
   ok)   printf 'ok   - command is discoverable after install\n' ;;
