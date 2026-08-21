@@ -696,7 +696,7 @@ Edit `engineering/tests/validate.sh` so it validates the engineering package:
 - command existence: `commands/vernacular.md` exists (the command name stays `vernacular`).
 - README existence: `engineering/README.md` exists.
 - root README: assert it lists `engineering` (the cutover plan adds this line; until then, this single check is expected to fail — see Step 5 note).
-- Extend the "no stack-detection artefact" scan to the engineering skills tree.
+- Keep the "no stack-detection artefact" scan scoped to vernacular's own three docs-skill dirs (`clarifying-docblocks`, `rewriting-docblock-prose`, `verifying-docblock-claims`), not the whole engineering skills tree — this is vernacular's own invariant that it never hard-codes a language/stack table, and verity's `conducting-test-hardening` legitimately ships its own `detecting-the-stack.md` / `stack-markers.md` references elsewhere in the tree.
 
 - [ ] **Step 3: Re-identify `e2e.sh`**
 
