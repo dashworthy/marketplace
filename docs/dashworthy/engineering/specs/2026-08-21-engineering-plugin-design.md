@@ -15,11 +15,11 @@ demonstrated in Matt Pocock's skills (https://github.com/mattpocock/skills) as o
 dashworthy works — original text and structure, nothing copied (see §9).
 
 The larger objective this serves: **eventually remove the `superpowers` plugin.** This spec
-delivers a near-complete replacement — the skills that stand in for `superpowers`'
-implementation skills (TDD, debugging, code review), its planning + execution pair, **and** its
-connective tissue (worktrees, finishing-branch, verification, parallel dispatch, skill-writing,
-skill-discovery — §6.5), plus net-new capability. The one `superpowers` process skill it does
-**not** directly replace is `brainstorming` (left open, G8).
+delivers a full replacement of its process skills — stand-ins for its implementation skills (TDD,
+debugging, code review), its planning + execution pair, its design-dialogue (`brainstorming`,
+§6.6), **and** its connective tissue (worktrees, finishing-branch, verification, parallel
+dispatch, skill-writing, skill-discovery — §6.5) — plus net-new capability (discovery, triage,
+test-hardening, docs-hardening, architecture).
 
 ## 2. Context
 
@@ -68,14 +68,15 @@ substrates:
 | D8 | Every skill is dashworthy's **own original** work; Matt's skills and `superpowers` are inspiration only. No copying, no attribution, no NOTICE (§9) | User directive: "make these entirely my own" |
 | D9 | Plugin name: `engineering` | Clearest umbrella label; deliberately breaks the evocative-single-word pattern (signal/verity/vernacular) because this is the meta-plugin |
 | D10 | Deprecate standalone `signal`/`vernacular`/`verity` marketplace entries with a README redirect | Clean documented break; existing installs keep working until reinstall |
-| D11 | Author `superpowers`' connective tissue **in this spec** (worktrees, finishing-branch, verification, parallel-dispatch, skill-writing, skill-discovery — §6.5) | User directive: replace all of superpowers' connective tissue now, not later. Only `brainstorming` is left open (G8) |
+| D11 | Author `superpowers`' connective tissue **in this spec** (worktrees, finishing-branch, verification, parallel-dispatch, skill-writing, skill-discovery — §6.5) | User directive: replace all of superpowers' connective tissue now, not later. (With `brainstorming` added in D19, every superpowers process skill is now authored) |
 | D12 | Planning + execution authored **in superpowers style**, in this spec (`writing-plans`, `executing-plans` → `/implement`); Matt's tracker planning chain dropped | User directive; closes the planning gap without tracker coupling |
 | D13 | Two file tiers: Tier-1 specs/plans → `docs/dashworthy/engineering/{specs,plans}` (committed); Tier-2 build files → `.engineering/<run>/<name>/` (gitignored, run-first) | User directive; separates durable artifacts from runtime scratch |
 | D14 | **Ship functional names this pass.** The signal/verity/vernacular artisanal theme (proposed map, §5.4) is deferred to a later cohesion pass. `to-signal` keeps its (explicitly chosen) name | User directive: keep functional for now |
-| D15 | **Invert the hook model.** A `SessionStart` hook injects a *discovery bootstrap* (superpowers-style) that surfaces `using-skills` + nudges `/signal` before building (§5.5). Verity's own session-start hook is **retired**; test-hardening becomes a **planned step** (`writing-plans` bakes it in, `executing-plans` runs it) plus a **finish-time safety net** in `finishing-a-development-branch` | User directive: call signal like superpowers does; tie verity to the plan, not a session-start hook |
+| D15 | **Invert the hook model.** A `SessionStart` hook injects an *entrance bootstrap* (superpowers-style) that surfaces `using-skills` + routes to `/signal` or `/triage` before building (§5.5). Verity's own session-start hook is **retired**; test-hardening becomes a **planned step** (`writing-plans` bakes it in, `executing-plans` runs it) plus a **finish-time safety net** in `finishing-a-development-branch` | User directive: call signal like superpowers does; tie verity to the plan, not a session-start hook |
 | D16 | **Second entrance `triage`** (`/triage`, §6.2). A problem-first door alongside `signal`: define a problem, isolate it with **minimal effort**, verify/reproduce it, then take the smallest next step — quick fix (`diagnosing-bugs`), grill (hand to `signal`), or spec it (`to-spec` → `writing-plans`). Establishes its own run and logs to `.engineering/<run>/triage/`. File-based reframe of Matt's tracker `triage` (flips its Skip verdict) | User directive: a separate `/triage` entrance for problem isolation |
 | D17 | **Shared `to-spec` skill** (§6.2) is the **single writer of Tier-1 specs** to `docs/dashworthy/engineering/specs/`. Both `signal` (post-discovery) and `triage` (when spec-worthy) delegate to it, so every entrance yields one spec format. Flips Matt's `to-spec` Skip → Author (file-based, no tracker). Resolves the §5.1 brief-seam | User directive: a `to-spec` skill both signal and triage use to create the spec doc |
 | D18 | **Skills stay flat on disk** (platform constraint: plugin `skills/` is scanned one level deep — *"Skills cannot be nested in category subdirectories"*). Process grouping is realized by (a) names that cluster by process, (b) a grouped `skills/README.md` index, (c) a `[Group]` tag opening each skill's `description`, (d) the grouped view in §7 — **not** filesystem subfolders | User directive: group skills by process where they are tightly tied to one; done within the platform's limits |
+| D19 | **Author a design-dialogue phase `brainstorming`** (Phase 1.4, §6.6) between the entrances and `to-spec`: weigh 2–3 approaches, shape the design section by section, hold the **approval gate** before any spec/plan. Resolves G8; completes the `superpowers` process-skill replacement | User question answered yes: there is value in a brainstorming phase between signal/triage and the spec |
 
 ## 4. Curation ledger — every Matt skill, in or out
 
@@ -122,8 +123,9 @@ not a source to copy.
 | Phase | Skills | Command(s) |
 |---|---|---|
 | **1 · Discover** (entrance) | `conducting-discovery`, `interrogating-requirements`, `expanding-scope`, `sequencing-requirements` (signal); `domain-modeling`; → `to-spec` | `/signal` |
-| **1 · Triage** (alt entrance) | `triage` (problem isolation, minimal effort; may grill via `signal`, quick-fix via `diagnosing-bugs`, or → `to-spec`) | `/triage` |
-| **1.5 · Spec** | `to-spec` (shared single writer of Tier-1 specs; used by both entrances) | — |
+| **1 · Triage** (alt entrance) | `triage` (problem isolation, minimal effort; may grill via `signal`, quick-fix via `diagnosing-bugs`, or → design dialogue) | `/triage` |
+| **1.4 · Design dialogue** | `brainstorming` (weigh 2–3 approaches, shape the design section by section, **approval gate** before any spec/plan) | — |
+| **1.5 · Spec** | `to-spec` (shared single writer of Tier-1 specs; renders the approved design) | — |
 | **2 · Design** | `codebase-design`, `improve-codebase-architecture`, `prototype` | `/improve-codebase-architecture` |
 | **2.5 · Plan** | `writing-plans` (authored, superpowers-style) | — |
 | **3 · Build & execute** | `tdd`, `diagnosing-bugs`, `code-review`, `executing-plans` (authored, superpowers-style) | `/implement` |
@@ -136,19 +138,22 @@ Shared knowledge layer across phases 2–4: `CONTEXT.md` + `docs/adr/`, seeded a
 `domain-modeling`, read (never required) by `tdd`, `code-review`, `codebase-design`,
 `improve-codebase-architecture`.
 
-Unit count: ~31 skills (signal 4 + verity 4 + vernacular 3 + Matt-inspired engineering 12 —
-now incl. `triage` + `to-spec` — + 2 planning/execution + 6 workflow foundations) + 3
-productivity commands (handoff, to-signal, wait-what — realized as pure commands, see §5.2).
+Unit count: ~32 skills (signal 4 + verity 4 + vernacular 3 + Matt-inspired engineering 12 —
+now incl. `triage` + `to-spec` — + 2 planning/execution + 1 design-dialogue (`brainstorming`) +
+6 workflow foundations) + 3 productivity commands (handoff, to-signal, wait-what — realized as
+pure commands, see §5.2).
 Commands total: 9 (`/signal`, `/triage`, `/vernacular`, `/improve-codebase-architecture`,
 `/implement`, `/wizard`, `/handoff`, `/to-signal`, `/wait-what`). Hook: 1 (`SessionStart`
-discovery bootstrap, §5.5). This is a large plugin — the trade for it being a near-complete
+entrance bootstrap → `/signal` or `/triage`, §5.5). This is a large plugin — the trade for it
+being a near-complete
 `superpowers` replacement plus the design/discovery additions.
 
 ### End-to-end flow
 
 Two entrances open the work — **Discover** (`/signal`, feature/greenfield) and **Triage**
-(`/triage`, problem isolation) — and both converge on **`to-spec`**, the single writer of the
-Tier-1 spec. From there the phases run in order; the **Foundations** wrap every phase (worktree
+(`/triage`, problem isolation) — and both pass through **`brainstorming`** (the design-dialogue
+approval gate, §6.6) into **`to-spec`**, the single writer of the Tier-1 spec. From there the
+phases run in order; the **Foundations** wrap every phase (worktree
 at the start, verification/finishing at the end) and the **Cross-cutting** skills are invoked on
 demand at any point. Solid arrows are the phase sequence; dashed arrows are artifact reads/writes
 or hand-offs. Tier-1 documents (yellow) are committed under `docs/dashworthy/engineering/`; the
@@ -171,8 +176,9 @@ flowchart TD
       p1 --> p2 --> p25 --> p3 --> p35 --> p4
     end
 
-    hook["SessionStart hook<br/>discovery bootstrap (§5.5)"]
+    hook["SessionStart hook<br/>entrance bootstrap (§5.5)"]
     hook -. nudges .-> p1
+    hook -. nudges .-> ptri
     req --> p1
     p4 --> done
 
@@ -182,11 +188,13 @@ flowchart TD
     ptri -. grill if fuzzy .-> p1
     ptri -. quick fix .-> p3
 
+    bstorm["1.4 · brainstorming<br/>approaches + approval gate"]
     tospec["1.5 · to-spec<br/>shared spec writer"]
     spec["spec<br/>docs/.../specs/"]
     plan["implementation plan<br/>docs/.../plans/"]
-    p1 -. hands off .-> tospec
-    ptri -. if spec-worthy .-> tospec
+    p1 -. brief .-> bstorm
+    ptri -. if spec-worthy .-> bstorm
+    bstorm -. approved design .-> tospec
     tospec -. writes .-> spec
     spec -. reads .-> p25
     spec -. Spec axis .-> p3
@@ -324,6 +332,7 @@ Proposed map (future — not applied this pass; `to-signal` is the one already-c
 
 | Capability | Proposed name | Why |
 |---|---|---|
+| brainstorming | **charrette** | an intensive collaborative design session |
 | domain-modeling | **lexicon** | owns `CONTEXT.md` — the project's vocabulary |
 | codebase-design | **profundity** | deep-module vocabulary (depth, leverage, seams) |
 | improve-codebase-architecture | **renovation** (`/renovate`) | finds shallow modules and deepens them |
@@ -344,21 +353,27 @@ signal/verity/vernacular and their internal sub-skills keep their current names.
 this spec, capabilities are referred to by their functional names for clarity; §5.4 is the
 authority on the shipped skill id.
 
-### 5.5 Session-start hook — discovery bootstrap (D15)
+### 5.5 Session-start hook — entrance bootstrap (D15, D16)
 
 Mirrors how `superpowers` surfaces its process skills at the top of a session. A single
 `SessionStart` hook (`hooks/hooks.json` + `hooks/session-start.sh`) injects a short bootstrap
 that:
 
 - points at the `using-skills` foundation (§6.5) — *invoke the right skill before acting*; and
-- nudges **discovery-first**: when a request is a feature or a vague ask, run `/signal` (or
-  `conducting-discovery`) to turn it into a brief before designing or building.
+- **routes to the right entrance** before anyone starts building:
+  - a feature or a vague ask → `/signal` (discovery → brief);
+  - a reported bug or defect → `/triage` (isolate with minimal effort).
 
-This is the engineering analog of superpowers' "brainstorm before building" bootstrap, pointed
-at `signal`. It **injects guidance only — it never blocks**; the `using-skills` discipline does
-the enforcing. It replaces verity's old session-start reminder, which is retired: verity is now
-triggered by the plan and at finish time (D15, §6.1/§6.4/§6.5), not by a session-start hook.
-This plugin ships exactly one hook.
+This is the engineering analog of superpowers' "brainstorm before building" bootstrap, widened to
+cover both front doors. It **injects guidance only — it never blocks**; the `using-skills`
+discipline does the enforcing. It replaces verity's old session-start reminder, which is retired:
+verity is now triggered by the plan and at finish time (§6.1/§6.4/§6.5), not by a session-start
+hook.
+
+**One hook, by choice — not by limit** (verified against the plugin docs). A plugin may declare
+many hooks — multiple events, matchers, and actions in `hooks.json`. This plugin needs only the
+single `SessionStart` bootstrap, and it carries *both* entrances, so `/triage` needs no hook of
+its own. If a later event-driven trigger is ever wanted, it is added to the same `hooks.json`.
 
 ### 5.6 Grouping the `skills/` directory (D18)
 
@@ -409,7 +424,7 @@ tag — they are not tied to one process, which is itself the signal.
   becomes a **planned step** — `writing-plans` bakes a Phase-3.5 hardening task into every plan
   and `executing-plans` runs it (§6.4) — plus a **finish-time safety net** in
   `finishing-a-development-branch` (§6.5) so plan-less, ad-hoc work is still hardened before a
-  branch is finished. The plugin's one `SessionStart` hook is now the discovery bootstrap (§5.5),
+  branch is finished. The plugin's one `SessionStart` hook is now the entrance bootstrap (§5.5),
   not verity's reminder.
 
 ### 6.2 Original skills, inspired by Matt's (§9)
@@ -439,6 +454,21 @@ means write dashworthy's own SKILL and companion files covering the same techniq
      **wontfix/already-done** outcome is recorded and closed.
   Everything is file-based — no tracker, no labels, no PR state-machine (all dropped from Matt's
   tracker-coupled `triage`, §9). Disposition is written to `.engineering/<run>/triage/`.
+
+  **When `triage` writes a spec (vs. not).** The default is *minimal effort* — most triaged
+  problems resolve without a spec. `triage` routes by the case below; a spec is written only when
+  the fix warrants planning:
+
+  | Case | Route | Spec? |
+  |---|---|---|
+  | Cause obvious, fix small and localized, low risk | quick fix → `diagnosing-bugs` | **No** |
+  | Not reproducible, already implemented, or out of scope | record disposition + close | **No** |
+  | Under-specified, or really a feature request in disguise | grill → `signal` → `brainstorming` → `to-spec` | **Yes** (feature path) |
+  | Real fix but non-trivial — several sites, a design choice, risky/cross-cutting, needs sequencing, or will be handed to an AFK agent | `brainstorming` → `to-spec` → `writing-plans` | **Yes** |
+
+  Rule of thumb: **spec when the fix needs a plan or another party will execute it; skip the spec
+  when a single obvious change closes it.** The spec-worthy rows pass through `brainstorming`
+  (Phase 1.4) so the fix's approach is weighed and approved before planning.
 - **codebase-design** — author `SKILL.md` + `DEEPENING.md` + `DESIGN-IT-TWICE.md` (deep-module
   vocabulary). Foundation for the design phase; build first.
 - **domain-modeling** — author `SKILL.md` + dashworthy `CONTEXT-FORMAT.md` / `ADR-FORMAT.md`
@@ -537,10 +567,39 @@ by discipline, not by command); no new commands.
   named `using-skills` (not `using-superpowers`) precisely because it is not superpowers.
 
 > Residual note: `superpowers`' `brainstorming` (approval-gated design dialogue) is **not** one
-> of these six and is only partly covered by `signal` (discovery→brief). Whether to author a
-> dashworthy `brainstorming` is left open — flagged in G8, not built here — as it is the one
-> `superpowers` process skill this spec does not directly replace. `subagent-driven-development`
-> is covered by `executing-plans`' subagent mode (§6.4).
+> of these six foundations — it is a pipeline phase, authored separately as `engineering:brainstorming`
+> (Phase 1.4, §6.6, D19). `subagent-driven-development` is covered by `executing-plans`' subagent
+> mode (§6.4). With these, every `superpowers` process skill has a dashworthy equivalent.
+
+### 6.6 Authored design dialogue — `brainstorming` (superpowers as inspiration)
+
+Phase 1.4, the collaborative design-shaping step between the entrances and `to-spec` (D19).
+Authored fresh, inspired by `superpowers:brainstorming` — original text and structure, nothing
+copied (§9). Model-invoked; no command (it fires when a piece of work is being shaped into a
+design, reachable from either entrance and nudged by the bootstrap, §5.5).
+
+- **Where it sits.** `signal` gathers requirements (a brief) and stops; `triage` isolates a
+  problem; `brainstorming` takes that material and shapes a **design** with the human, then hands
+  the approved design to `to-spec`, which writes the spec. It is the gate between *what* and
+  *how*.
+- **What it does.** Explore the project context; propose **2–3 approaches** with trade-offs and a
+  recommendation; if the work is too large for one spec, **decompose** it into sub-projects and
+  brainstorm the first; present the design **section by section**, taking incremental approval;
+  hold a **hard gate** — no `writing-plans`, no build, until the human approves the design.
+- **Boundaries (house style — narrow guarantees).**
+  - vs `signal`: signal interrogates *what to build* (requirements); brainstorming weighs
+    *how to build it* (approach) and owns the approval gate. Signal keeps its "brief and stops,
+    does not design" guarantee.
+  - vs `codebase-design` (Phase 2): that is technical module design *after* the spec, during
+    implementation; brainstorming is product/approach design *before* the spec. Brainstorming may
+    consult `CONTEXT.md`/ADRs but does not itself design internals.
+  - vs `to-spec`: brainstorming produces the approved design through dialogue (the gate);
+    `to-spec` serializes it (the writer).
+- **Skippable for minimal-effort work.** A `triage` quick fix that needs no spec bypasses it (the
+  diagram's `quick fix` edge). Anything that reaches a spec passes through it; for a trivial spec
+  the dialogue is short, but the approach check and approval gate still run.
+- **Transition overlap (G5).** Ships as `engineering:brainstorming` alongside
+  `superpowers:brainstorming` until superpowers is removed; namespacing keeps them distinct.
 
 ## 7. Directory layout
 
@@ -560,7 +619,7 @@ engineering/
 │   └── wait-what.md                  productivity (pure command, §5.2)
 ├── hooks/
 │   ├── hooks.json
-│   └── session-start.sh              discovery bootstrap (§5.5)
+│   └── session-start.sh              entrance bootstrap → /signal | /triage (§5.5)
 ├── scripts/
 │   ├── reconcile.py                  vernacular
 │   ├── hitl-loop.template.sh         diagnosing-bugs
@@ -576,6 +635,7 @@ engineering/
     ├── expanding-scope/              │
     ├── sequencing-requirements/      ┘
     ├── triage/                       [Triage] (+ references/; → /triage)
+    ├── brainstorming/                [Design] (design-dialogue gate, §6.6)
     ├── to-spec/                      [Discovery] (+ SPEC-FORMAT.md; shared spec writer)
     ├── domain-modeling/
     ├── codebase-design/              (+ DEEPENING.md, DESIGN-IT-TWICE.md)
@@ -649,10 +709,6 @@ idea, method, or workflow; so dashworthy re-derives the method and writes it fre
 
 This plugin explicitly does **not**:
 
-- Directly replace `superpowers`' `brainstorming` (approval-gated design dialogue). `signal`
-  covers discovery→brief; the design-dialogue element is only partly covered. Left open (G8).
-  (Every *other* `superpowers` process skill — planning, execution, worktrees, finishing-branch,
-  verification, parallel dispatch, skill-writing, skill-discovery — **is** authored here, §6.4/§6.5.)
 - Integrate with any issue tracker. All artifacts are files (including `triage`, which logs to
   `.engineering/<run>/triage/`, not to a tracker).
 - Require `CONTEXT.md`/ADRs — the design/build skills read them when present, never demand them.
@@ -669,26 +725,26 @@ This plugin explicitly does **not**:
 | G2 | ~~**Connective tissue.**~~ **Resolved in this spec.** worktrees, finishing-a-branch, verification-before-completion, dispatching-parallel-agents, writing-skills, using-skills — the six workflow disciplines that had no equivalent in Matt's set or dashworthy. | Build here (§6.5). Authored original, inspired by superpowers' approach (§9) — no copying. |
 | G3 | **CONTEXT/ADR templates.** `domain-modeling` needs `CONTEXT-FORMAT.md`/`ADR-FORMAT.md` format templates. | Author original dashworthy templates; the CONTEXT.md-glossary + lightweight-ADR pattern is a well-known convention, so no source needed. |
 | G4 | **`grill-with-docs` removal.** `improve-codebase-architecture` leans on it. | Rewire to `codebase-design` + `domain-modeling` (§6.2). Verify the loop still terminates sensibly. |
-| G5 | **Transition-period name overlap.** While `superpowers` is still installed, some authored skills (`engineering:tdd`, `engineering:code-review`, `engineering:writing-plans`/`executing-plans`) sit alongside their `superpowers` counterparts (test-driven-development, requesting-code-review, writing-plans/executing-plans). | Namespacing keeps them distinct; the duplication resolves when `superpowers` is removed. Note in README. |
+| G5 | **Transition-period name overlap.** While `superpowers` is still installed, some authored skills (`engineering:tdd`, `engineering:code-review`, `engineering:writing-plans`/`executing-plans`, `engineering:brainstorming`, and the foundations) sit alongside their `superpowers` counterparts. | Namespacing keeps them distinct; the duplication resolves when `superpowers` is removed. Note in README. |
 | G6 | ~~`implement` stranding.~~ **Resolved.** Superseded by authored `writing-plans` + `executing-plans` (§4 note, §6.4). | Build here, not deferred. |
 | G7 | **Run-context mechanism (new).** Run-first Tier-2 (§5.3) introduces the shared `.engineering/.current-run` pointer — the one piece of cross-phase state. Risk: phases must read/create it identically, or a run fragments across ids. | Implementation must give every absorbed skill the same read-or-create-pointer step; add a test that two phases in one session share a `<run>`. |
-| G8 | **Brainstorming residual.** `superpowers`' `brainstorming` (approval-gated design dialogue → spec) is the one process skill this spec does not directly replace. `signal` covers discovery→brief, but its interrogation register differs from brainstorming's collaborative design dialogue (§6.5 residual note). | **Left open — not built here.** Decide later whether to author a dashworthy `brainstorming`, extend `signal` with a design-dialogue mode, or leave it to `signal` + `writing-plans`. Does not block `superpowers` removal on its own. |
+| G8 | ~~**Brainstorming residual.**~~ **Resolved (D19).** Authored as `engineering:brainstorming` (Phase 1.4, §6.6) — the design-dialogue approval gate between the entrances and `to-spec`. With it, every `superpowers` process skill has a dashworthy equivalent. | Build here, not deferred. |
 
 ### After this spec (documented, not built here)
 
-With planning/execution (§6.4) and the six connective-tissue foundations (§6.5) both authored
-here, only two threads remain before `superpowers` can be removed:
+Every `superpowers` process skill now has a dashworthy equivalent authored here — implementation
+skills (§6.2), planning/execution (§6.4), the six connective-tissue foundations (§6.5), and the
+`brainstorming` design-dialogue (§6.6). Nothing about the `superpowers` removal remains open. One
+unrelated thread is documented for later:
 
-- **`brainstorming` (G8)** — decide whether to author a dashworthy equivalent, extend `signal`,
-  or accept `signal` + `writing-plans` as sufficient. A scoping question, not a committed build.
 - **The `guardrails` plugin (§12)** — `git-guardrails-claude-code` + `setup-pre-commit`, a
   separate small plugin with its own spec. Repo-hygiene tooling, not an SDLC phase; unrelated to
   the `superpowers` removal.
 
 ## 12. Out of scope
 
-- Removing the `superpowers` plugin itself (that happens once this replacement is proven in daily
-  use, and the `brainstorming` question, G8, is settled).
+- Removing the `superpowers` plugin itself (that happens once this replacement — now covering
+  every superpowers process skill, including `brainstorming` — is proven in daily use).
 - Any change to `verity`'s or `vernacular`'s internal proof mechanics beyond re-namespacing.
 - **`git-guardrails-claude-code` and `setup-pre-commit`** (Matt's `skills/misc/`). These are
   repo-guardrail / hygiene tooling, not SDLC-pipeline phases: git-guardrails is a Claude-Code
@@ -701,7 +757,8 @@ here, only two threads remain before `superpowers` can be removed:
 
 1. Scaffold `engineering/` — `plugin.json`, `README.md` skeleton, `skills/README.md` grouping
    index (D18). Add `.engineering/` to `.gitignore` (Tier-2 root). Establish the run-context
-   convention doc (§5.3). Author the `SessionStart` discovery-bootstrap hook (`hooks/`, §5.5).
+   convention doc (§5.3). Author the `SessionStart` entrance-bootstrap hook — routes to `/signal`
+   or `/triage` (`hooks/`, §5.5).
 2. Author the shared **`to-spec`** spec-writer + `SPEC-FORMAT.md` (§6.2, D17) — the single writer
    of Tier-1 specs. Then absorb `signal` — move + re-namespace; signal's discovery brief becomes
    Tier-2 (`.engineering/<run>/signal/`) and its final step delegates to `to-spec` for the
@@ -712,7 +769,7 @@ here, only two threads remain before `superpowers` can be removed:
    read/create the run pointer; run `tests/` green.
 4. Absorb `verity` — move the 4 skills + `references/` + re-namespace; redirect `.verity/*` →
    `.engineering/<run>/verity/`; read/create the run pointer. **Retire verity's session-start
-   hook** (D15): hardening becomes a planned step (step 9) + a finish-time safety net (step 11).
+   hook** (D15): hardening becomes a planned step (step 9) + a finish-time safety net (step 12).
 5. Author `codebase-design` (deep-module vocabulary) — the design-phase foundation.
 6. Author `domain-modeling` + dashworthy `CONTEXT`/`ADR` format templates (resolve G3).
 7. Author `tdd`, `diagnosing-bugs`, `code-review` — `code-review` reads its spec source from
@@ -723,23 +780,28 @@ here, only two threads remain before `superpowers` can be removed:
    working state under `.engineering/<run>/implement/`), inspired by superpowers (§6.4). Every
    plan ends with a test-hardening task; `executing-plans` runs it via `conducting-test-hardening`
    (D15).
-10. Author `prototype`, `research`, `resolving-merge-conflicts`, `wizard` (+ `/wizard`), and
+10. Author **`brainstorming`** (Phase 1.4, §6.6, D19) — the design-dialogue approval gate. It
+    takes a `signal` brief or a `triage` problem, weighs 2–3 approaches, shapes the design section
+    by section with the human, gates before any plan/build, then hands the approved design to
+    `to-spec`. Model-invoked; no command. Build after `signal`/`to-spec` (step 2) exist.
+11. Author `prototype`, `research`, `resolving-merge-conflicts`, `wizard` (+ `/wizard`), and
     **`triage`** (+ `/triage`, §6.2) — the problem-isolation entrance. It establishes/joins a run
     and logs to `.engineering/<run>/triage/`, and dispatches to `diagnosing-bugs` (quick fix),
-    `signal` (grill), or `to-spec` → `writing-plans` (spec-worthy); build it after those targets
-    exist (steps 2, 7, 9).
-11. Author the six workflow foundations (§6.5), inspired by superpowers: `using-git-worktrees`,
+    `signal` (grill), or `brainstorming` → `to-spec` (spec-worthy); build it after those targets
+    exist (steps 2, 7, 9, 10).
+12. Author the six workflow foundations (§6.5), inspired by superpowers: `using-git-worktrees`,
     `finishing-a-development-branch`, `verification-before-completion`,
     `dispatching-parallel-agents`, `writing-skills`, `using-skills`. Model-invoked; no commands.
     `finishing-a-development-branch` carries the verity finish-time safety net (D15).
-12. Author the three productivity commands as pure `commands/*.md` (§5.2, §6.3): `/handoff`,
+13. Author the three productivity commands as pure `commands/*.md` (§5.2, §6.3): `/handoff`,
     `/to-signal`, `/wait-what`.
-13. Rewrite `marketplace.json` (single entry) + root `README.md` (deprecation redirect +
+14. Rewrite `marketplace.json` (single entry) + root `README.md` (deprecation redirect +
     pipeline overview + non-guarantees).
-14. Delete absorbed top-level `signal/`, `verity/`, `vernacular/` dirs.
-15. Verify: every command (9) resolves; every skill frontmatter valid (process-tied ones carry a
+15. Delete absorbed top-level `signal/`, `verity/`, `vernacular/` dirs.
+16. Verify: every command (9) resolves; every skill frontmatter valid (process-tied ones carry a
     `[Group]` `description` tag, D18) and `skills/README.md` lists them all; the `SessionStart`
-    discovery hook fires; `/triage` establishes a run and logs to `.engineering/<run>/triage/`;
+    entrance-bootstrap hook fires and names both `/signal` and `/triage`; `/triage` establishes a
+    run and logs to `.engineering/<run>/triage/`;
     `to-spec` writes the Tier-1 spec (both `signal` and `triage` reach it); verity runs as a
     planned step (not a session-start hook); vernacular `tests/` pass; a run-context test shows
     two phases in one session share a `<run>` (G7); no dangling `signal:`/`verity:`/`vernacular:`
