@@ -73,6 +73,9 @@ substrates:
 | D13 | Two file tiers: Tier-1 specs/plans → `docs/dashworthy/engineering/{specs,plans}` (committed); Tier-2 build files → `.engineering/<run>/<name>/` (gitignored, run-first) | User directive; separates durable artifacts from runtime scratch |
 | D14 | **Ship functional names this pass.** The signal/verity/vernacular artisanal theme (proposed map, §5.4) is deferred to a later cohesion pass. `to-signal` keeps its (explicitly chosen) name | User directive: keep functional for now |
 | D15 | **Invert the hook model.** A `SessionStart` hook injects a *discovery bootstrap* (superpowers-style) that surfaces `using-skills` + nudges `/signal` before building (§5.5). Verity's own session-start hook is **retired**; test-hardening becomes a **planned step** (`writing-plans` bakes it in, `executing-plans` runs it) plus a **finish-time safety net** in `finishing-a-development-branch` | User directive: call signal like superpowers does; tie verity to the plan, not a session-start hook |
+| D16 | **Second entrance `triage`** (`/triage`, §6.2). A problem-first door alongside `signal`: define a problem, isolate it with **minimal effort**, verify/reproduce it, then take the smallest next step — quick fix (`diagnosing-bugs`), grill (hand to `signal`), or spec it (`to-spec` → `writing-plans`). Establishes its own run and logs to `.engineering/<run>/triage/`. File-based reframe of Matt's tracker `triage` (flips its Skip verdict) | User directive: a separate `/triage` entrance for problem isolation |
+| D17 | **Shared `to-spec` skill** (§6.2) is the **single writer of Tier-1 specs** to `docs/dashworthy/engineering/specs/`. Both `signal` (post-discovery) and `triage` (when spec-worthy) delegate to it, so every entrance yields one spec format. Flips Matt's `to-spec` Skip → Author (file-based, no tracker). Resolves the §5.1 brief-seam | User directive: a `to-spec` skill both signal and triage use to create the spec doc |
+| D18 | **Skills stay flat on disk** (platform constraint: plugin `skills/` is scanned one level deep — *"Skills cannot be nested in category subdirectories"*). Process grouping is realized by (a) names that cluster by process, (b) a grouped `skills/README.md` index, (c) a `[Group]` tag opening each skill's `description`, (d) the grouped view in §7 — **not** filesystem subfolders | User directive: group skills by process where they are tightly tied to one; done within the platform's limits |
 
 ## 4. Curation ledger — every Matt skill, in or out
 
@@ -95,11 +98,11 @@ not a source to copy.
 | `handoff` (productivity) | **Author** (command) | Compact a conversation into a handoff doc; `disable-model-invocation: true` → `/handoff` |
 | `to-signal` (productivity) | **Author** (command) | `/to-signal` — turn a decision you can't answer into a questionnaire for someone else, whose answers feed back into discovery (hence the name); inspiration: Matt's `to-questionnaire` |
 | `wait-what` (productivity) | **Author** (command) | Comms repair — "that last message didn't land, re-pitch it"; reads `CONTEXT.md`/`CONTEXT-MAP.md`; → `/wait-what` |
-| `to-spec` | **Skip** | HEAVY tracker coupling; `signal` already does discovery→brief (a file) |
+| `to-spec` | **Author** (model) | Reframed file-based (D17): the shared single writer of Tier-1 specs to `docs/.../specs/`, used by both `signal` and `triage`. Matt's tracker coupling is dropped |
+| `triage` | **Author** (model + command) | Reframed file-based (D16): a problem-isolation entrance, `/triage`. Matt's tracker/label state-machine is dropped; disposition is logged to `.engineering/<run>/triage/` |
 | `wayfinder` | **Skip** | HEAVY tracker coupling; a tracker methodology, not worth it file-based |
 | `to-tickets` | **Skip** | HEAVY tracker coupling; planning value overlaps `signal`'s `sequencing-requirements` |
 | `implement` | **Skip — superseded** | Replaced by an authored, superpowers-inspired `executing-plans` (+ `/implement`), paired with an authored `writing-plans`. See §4 note and §6.4 |
-| `triage` | **Skip** | Needs Matt's tracker + label infra |
 | `grill-with-docs` | **Skip** | Interactive grilling loop; its role inside `improve-codebase-architecture` is replaced by `codebase-design` + `domain-modeling` |
 | `ask-matt` | **Skip** | Personal routing skill referencing Matt's own system |
 | `setup-matt-pocock-skills` | **Skip** | Seeds the tracker substrate we reject |
@@ -110,14 +113,17 @@ not a source to copy.
 > `/code-review`, with review gates and optional subagent-driven mode), surfaced as
 > `/implement`. This is the user's directed choice ("for planning and implement, follow more of
 > the superpowers style"). It closes the planning gap (former G1) inside this spec and removes
-> the stranding concern. Matt's tracker-coupled `to-spec`/`to-tickets`/`wayfinder`/`implement`
-> are all skipped in favor of it. Both are **original works, nothing copied** — see §9.
+> the stranding concern. Matt's tracker-coupled `to-tickets`/`wayfinder` and his `implement` are
+> skipped in favor of it; his `to-spec` is not skipped but **reimagined file-based** as the shared
+> spec writer (D17, §6.2). Both are **original works, nothing copied** — see §9.
 
 ## 5. Target architecture — the pipeline
 
 | Phase | Skills | Command(s) |
 |---|---|---|
-| **1 · Discover** | `conducting-discovery`, `interrogating-requirements`, `expanding-scope`, `sequencing-requirements` (signal); `domain-modeling` | `/signal` |
+| **1 · Discover** (entrance) | `conducting-discovery`, `interrogating-requirements`, `expanding-scope`, `sequencing-requirements` (signal); `domain-modeling`; → `to-spec` | `/signal` |
+| **1 · Triage** (alt entrance) | `triage` (problem isolation, minimal effort; may grill via `signal`, quick-fix via `diagnosing-bugs`, or → `to-spec`) | `/triage` |
+| **1.5 · Spec** | `to-spec` (shared single writer of Tier-1 specs; used by both entrances) | — |
 | **2 · Design** | `codebase-design`, `improve-codebase-architecture`, `prototype` | `/improve-codebase-architecture` |
 | **2.5 · Plan** | `writing-plans` (authored, superpowers-style) | — |
 | **3 · Build & execute** | `tdd`, `diagnosing-bugs`, `code-review`, `executing-plans` (authored, superpowers-style) | `/implement` |
@@ -130,20 +136,24 @@ Shared knowledge layer across phases 2–4: `CONTEXT.md` + `docs/adr/`, seeded a
 `domain-modeling`, read (never required) by `tdd`, `code-review`, `codebase-design`,
 `improve-codebase-architecture`.
 
-Unit count: ~29 skills (signal 4 + verity 4 + vernacular 3 + Matt-inspired engineering 10 +
-2 planning/execution + 6 workflow foundations) + 3 productivity commands (handoff, to-signal,
-wait-what — realized as pure commands, see §5.2). Commands total: 8 (`/signal`, `/vernacular`,
-`/improve-codebase-architecture`, `/implement`, `/wizard`, `/handoff`, `/to-signal`,
-`/wait-what`). Hook: 1 (`SessionStart` discovery bootstrap, §5.5). This is a large plugin — the
-trade for it being a near-complete `superpowers` replacement plus the design/discovery additions.
+Unit count: ~31 skills (signal 4 + verity 4 + vernacular 3 + Matt-inspired engineering 12 —
+now incl. `triage` + `to-spec` — + 2 planning/execution + 6 workflow foundations) + 3
+productivity commands (handoff, to-signal, wait-what — realized as pure commands, see §5.2).
+Commands total: 9 (`/signal`, `/triage`, `/vernacular`, `/improve-codebase-architecture`,
+`/implement`, `/wizard`, `/handoff`, `/to-signal`, `/wait-what`). Hook: 1 (`SessionStart`
+discovery bootstrap, §5.5). This is a large plugin — the trade for it being a near-complete
+`superpowers` replacement plus the design/discovery additions.
 
 ### End-to-end flow
 
-The six phases run in order; the **Foundations** wrap every phase (worktree at the start,
-verification/finishing at the end) and the **Cross-cutting** skills are invoked on demand at any
-point. Solid arrows are the phase sequence; dashed arrows are artifact reads/writes. Tier-1
-documents (yellow) are committed under `docs/dashworthy/engineering/`; the knowledge store
-(blue) is `CONTEXT.md` + `docs/adr/`; Tier-2 scratch (grey) is gitignored `.engineering/<run>/`.
+Two entrances open the work — **Discover** (`/signal`, feature/greenfield) and **Triage**
+(`/triage`, problem isolation) — and both converge on **`to-spec`**, the single writer of the
+Tier-1 spec. From there the phases run in order; the **Foundations** wrap every phase (worktree
+at the start, verification/finishing at the end) and the **Cross-cutting** skills are invoked on
+demand at any point. Solid arrows are the phase sequence; dashed arrows are artifact reads/writes
+or hand-offs. Tier-1 documents (yellow) are committed under `docs/dashworthy/engineering/`; the
+knowledge store (blue) is `CONTEXT.md` + `docs/adr/`; Tier-2 scratch (grey) is gitignored
+`.engineering/<run>/`.
 
 ```mermaid
 flowchart TD
@@ -166,11 +176,20 @@ flowchart TD
     req --> p1
     p4 --> done
 
-    brief["brief / spec<br/>docs/.../specs/"]
+    prob(["Reported problem / defect"])
+    ptri["1 · Triage<br/>/triage — isolate, minimal effort"]
+    prob --> ptri
+    ptri -. grill if fuzzy .-> p1
+    ptri -. quick fix .-> p3
+
+    tospec["1.5 · to-spec<br/>shared spec writer"]
+    spec["spec<br/>docs/.../specs/"]
     plan["implementation plan<br/>docs/.../plans/"]
-    p1 -. writes .-> brief
-    brief -. reads .-> p25
-    brief -. Spec axis .-> p3
+    p1 -. hands off .-> tospec
+    ptri -. if spec-worthy .-> tospec
+    tospec -. writes .-> spec
+    spec -. reads .-> p25
+    spec -. Spec axis .-> p3
     p25 -. writes .-> plan
     plan -. reads .-> p3
 
@@ -180,8 +199,9 @@ flowchart TD
     ctx -. read when present .-> p2
     ctx -. read when present .-> p3
 
-    scratch[".engineering/&lt;run&gt;/ — build scratch<br/>signal · verity · vernacular · implement"]
+    scratch[".engineering/&lt;run&gt;/ — build scratch<br/>signal · triage · verity · vernacular · implement"]
     PIPE -. writes per run .-> scratch
+    ptri -. logs per run .-> scratch
 
     subgraph FOUND["Foundations — apply throughout"]
       direction LR
@@ -207,7 +227,7 @@ flowchart TD
     classDef art fill:#fff5d6,stroke:#c9a227,color:#3a2f00;
     classDef store fill:#e6f0ff,stroke:#3b6fb5,color:#0a2540;
     classDef scratch fill:#eeeeee,stroke:#888,color:#222;
-    class brief,plan art;
+    class spec,plan art;
     class ctx store;
     class scratch scratch;
 ```
@@ -222,7 +242,7 @@ tool's artifacts:
 
 | Artifact | Path | Produced by | Consumed by |
 |---|---|---|---|
-| Discovery brief / spec | `docs/dashworthy/engineering/specs/` | `signal` (brief), any spec-writing step | `writing-plans`, `code-review` (Spec axis), humans |
+| Spec | `docs/dashworthy/engineering/specs/` | **`to-spec`** (the sole writer; fed by `signal` or `triage`) | `writing-plans`, `code-review` (Spec axis), humans |
 | Implementation plan | `docs/dashworthy/engineering/plans/` | `writing-plans` | `executing-plans` / `/implement`, humans |
 | Domain glossary | `CONTEXT.md` (repo root) | `domain-modeling` | design/build skills |
 | Decision records | `docs/adr/` | `domain-modeling` | design/build skills |
@@ -238,6 +258,7 @@ root, **run-first** so every phase of one run is co-located (§5.3), replacing t
 | Was | Becomes | Holds |
 |---|---|---|
 | `.signal/runs/<date>-<slug>/` | `.engineering/<run>/signal/` | `open-threads.md`, `00-request.md`, run scaffolding |
+| — (new) | `.engineering/<run>/triage/` | problem statement, reproduction notes, isolation findings, disposition |
 | `.verity/`, `.verity/briefs/` | `.engineering/<run>/verity/` (+ `briefs/`) | config, test-hardening working briefs |
 | `.vernacular/` | `.engineering/<run>/vernacular/` | rewrite receipts, reconcile temp |
 
@@ -245,10 +266,12 @@ Consequences:
 
 - **`.engineering/` is gitignored** (add to `.gitignore` during the build) — it is per-project
   runtime output, never committed, and never part of the plugin package.
-- **The spec/plan seam.** `signal`'s `brief.md` is the discovery *deliverable* → Tier 1
-  (`docs/dashworthy/engineering/specs/`); its run scaffolding stays Tier 2
-  (`.engineering/<run>/signal/`). **Assumption to confirm at review:** the brief is spec-tier
-  and lands in `docs/.../specs/`, while everything else signal writes is build-tier.
+- **The spec/plan seam (resolved by `to-spec`, D17).** The **spec** is the one Tier-1
+  discovery/triage deliverable, and **`to-spec` is its sole writer** →
+  `docs/dashworthy/engineering/specs/`. Whatever an entrance accumulates first — `signal`'s
+  discovery brief, `triage`'s isolation findings — stays Tier-2 working material
+  (`.engineering/<run>/{signal,triage}/`); the entrance then hands that material to `to-spec`,
+  which renders the committed spec. One writer, one format, regardless of entrance.
 - **`code-review` rewiring** (§6.2) reads its Spec-axis source from
   `docs/dashworthy/engineering/specs/` (plus user-supplied paths), replacing the tracker lookup.
 - Redirecting these working paths is part of each plugin's absorption (§6.1), and touches
@@ -258,8 +281,9 @@ Consequences:
 
 Two ways a user-invoked (D7) capability is realized, chosen by shape:
 
-- **Skill + thin `/command` wrapper** — when the capability has reference/subfiles, or another
-  skill dispatches it. Applies to `signal`, `vernacular`, `improve-codebase-architecture`, and
+- **Skill + thin `/command` wrapper** — when the capability has reference/subfiles, or it
+  dispatches other skills. Applies to `signal`, `triage` (it dispatches `signal` /
+  `diagnosing-bugs` / `to-spec`), `vernacular`, `improve-codebase-architecture`, and
   `executing-plans` (→ `/implement`). The `/command` is a few lines that invoke the skill.
 - **Pure `commands/<name>.md`** — when the capability is a self-contained single-shot with no
   subfiles and nothing dispatches it. Applies to `handoff`, `to-signal`, `wait-what`.
@@ -276,7 +300,9 @@ otherwise invoked independently:
   the top level so every phase shares it.
 - **Establishing / reusing a run:** the first phase to write in a working session creates the
   run and records it in a gitignored pointer, `.engineering/.current-run` (holds the active
-  `<run>`). Later phases read the pointer and write under the same `<run>`.
+  `<run>`). Later phases read the pointer and write under the same `<run>`. Either entrance can
+  be first — `signal` for a feature, `triage` for a problem — so both create-or-read the pointer
+  the same way (D16).
 - **Standalone invocation** (e.g. `/vernacular` with no prior `signal` run): if the pointer is
   absent, the skill starts a fresh run — its own `<YYYY-MM-DD>-<slug>` — and sets the pointer,
   so any subsequent phase joins it.
@@ -334,17 +360,42 @@ the enforcing. It replaces verity's old session-start reminder, which is retired
 triggered by the plan and at finish time (D15, §6.1/§6.4/§6.5), not by a session-start hook.
 This plugin ships exactly one hook.
 
+### 5.6 Grouping the `skills/` directory (D18)
+
+The user's intent: when several skills are tightly tied to one process, make that legible in
+`skills/`. The platform, however, **does not support subdirectory grouping** — Claude Code scans
+a plugin's `skills/` exactly one level deep and *"Skills cannot be nested in category
+subdirectories."* Moving `conducting-discovery` to `skills/discovery/conducting-discovery/` would
+make it undiscoverable. So the directories stay flat; the grouping is expressed four other ways:
+
+1. **Names that cluster.** The process-bound clusters already share a noun, so they sort and read
+   together: signal's discovery/requirements verbs; verity's `*-test-*`; vernacular's
+   `*-docblock*`; the foundations' workflow-discipline verbs. New process skills follow suit.
+2. **A `[Group]` tag opening each `description`.** Every process-tied skill's frontmatter
+   `description` starts with a bracketed group label — `[Discovery]`, `[Triage]`, `[Test
+   hardening]`, `[Docs]`, `[Design]`, `[Build]`, `[Planning]`, `[Foundation]`. This is visible in
+   the skill list and steers model-invocation matching, at zero structural cost.
+3. **A grouped `skills/README.md` index** — a table listing every skill under its process group,
+   the human's map of the flat directory.
+4. **The grouped view in §7** — the directory layout keeps its brace-grouped annotations.
+
+Cross-cutting/general skills (`wizard`, `research`, `resolving-merge-conflicts`) carry no group
+tag — they are not tied to one process, which is itself the signal.
+
 ## 6. Adaptation notes, per source
 
 ### 6.1 Absorbed dashworthy plugins (behavior-preserving move)
 
 - **signal → engineering.** Move 4 skills + `commands/signal.md`. Re-namespace every internal
   reference from `signal:` to `engineering:` (the `/signal` command dispatches
-  `signal:conducting-discovery`; the conductor dispatches the other three). **Tier-1:** write the
-  `brief.md` deliverable to `docs/dashworthy/engineering/specs/`. **Tier-2:** move run
-  scaffolding to `.engineering/<run>/signal/` (§5.1, §5.3); signal, as the usual first phase, is
-  the natural place to establish `<run>` and write the `.engineering/.current-run` pointer.
-  Updates the run-dir references in `conducting-discovery` and the README/command prose.
+  `signal:conducting-discovery`; the conductor dispatches the other three). **Spec-writing now
+  delegates to `to-spec` (D17):** signal's discovery brief becomes Tier-2 working material under
+  `.engineering/<run>/signal/`, and its final step hands that brief to `to-spec`, which writes the
+  committed Tier-1 spec to `docs/dashworthy/engineering/specs/` — signal no longer writes the
+  spec file itself. **Tier-2:** run scaffolding + brief live under `.engineering/<run>/signal/`
+  (§5.1, §5.3); signal, as the usual first phase, establishes `<run>` and writes the
+  `.engineering/.current-run` pointer. Updates the run-dir references in `conducting-discovery`
+  and the README/command prose.
 - **vernacular → engineering.** Move 3 skills + `commands/vernacular.md` + `scripts/reconcile.py`
   + `tests/` (`e2e.sh`, `reconcile.sh`, `validate.sh`). Re-namespace. **Tier-2:** redirect
   `.vernacular/` → `.engineering/<run>/vernacular/` in the skills, the receipt schema, and the
@@ -367,6 +418,27 @@ Each bullet names the inspiration and the pieces to build. Every file is **autho
 dashworthy voice — original text and structure, nothing copied (§9). "author `SKILL.md` + `X.md`"
 means write dashworthy's own SKILL and companion files covering the same technique.
 
+- **to-spec** — author `SKILL.md` + `SPEC-FORMAT.md` template. The **single writer of Tier-1
+  specs** (D17): given an entrance's accumulated material (a `signal` discovery brief or a
+  `triage` isolation record), render the standard spec document to
+  `docs/dashworthy/engineering/specs/<YYYY-MM-DD>-<topic>.md`. One format for every entrance;
+  consumed by `writing-plans` and `code-review`. File-based — Matt's `to-spec` was tracker-coupled
+  (issues/tickets); this is a clean reimplementation (§9). Model-invoked; no command.
+- **triage** — author `SKILL.md` + `references/` (a reproduction/isolation checklist and the
+  ready-brief shape). The **problem-isolation entrance** (D16), `/triage` (skill + wrapper, §5.2):
+  the maintainer describes a defect; triage establishes/joins a run (§5.3) and logs to
+  `.engineering/<run>/triage/`, then works for **minimal effort**:
+  1. **Verify / reproduce** the claim from the report before doing anything — confirmed (with the
+     failing path), not-reproducible, or under-specified.
+  2. **Isolate** the cause by domain concept (reading `CONTEXT.md`/ADRs when present); run a
+     **redundancy check** (is the wanted behaviour already implemented? → record and stop) and a
+     lightweight **prior-rejection** check.
+  3. **Take the smallest next step:** a **quick fix** hands to `diagnosing-bugs`; an
+     **under-specified / actually-a-feature** problem hands to `signal` for grilling
+     (interrogation); a **spec-worthy** fix hands to `to-spec` → `writing-plans`; a
+     **wontfix/already-done** outcome is recorded and closed.
+  Everything is file-based — no tracker, no labels, no PR state-machine (all dropped from Matt's
+  tracker-coupled `triage`, §9). Disposition is written to `.engineering/<run>/triage/`.
 - **codebase-design** — author `SKILL.md` + `DEEPENING.md` + `DESIGN-IT-TWICE.md` (deep-module
   vocabulary). Foundation for the design phase; build first.
 - **domain-modeling** — author `SKILL.md` + dashworthy `CONTEXT-FORMAT.md` / `ADR-FORMAT.md`
@@ -419,7 +491,8 @@ so a pure `commands/<name>.md` (§5.2).
 
 Per the user's directive ("for planning and implement, follow more of the superpowers style"),
 these two are **authored fresh, inspired by superpowers** — original text and structure, nothing
-copied (§9). They replace Matt's skipped `to-spec`/`to-tickets`/`wayfinder`/`implement`.
+copied (§9). They replace Matt's skipped `to-tickets`/`wayfinder`/`implement` (his `to-spec` is
+authored file-based instead, D17/§6.2).
 
 - **writing-plans** (Phase 2.5, model-invoked). Turns a spec/brief in
   `docs/dashworthy/engineering/specs/` into an ordered implementation plan written to
@@ -477,6 +550,7 @@ engineering/
 ├── README.md                         pipeline overview + process diagram + non-guarantees
 ├── commands/
 │   ├── signal.md
+│   ├── triage.md                       problem-isolation entrance (§6.2)
 │   ├── vernacular.md
 │   ├── improve-codebase-architecture.md
 │   ├── implement.md                  wrapper → executing-plans
@@ -496,10 +570,13 @@ engineering/
 │   ├── reconcile.sh
 │   └── validate.sh
 └── skills/
+    ├── README.md                     grouped skill index (D18)
     ├── conducting-discovery/         ┐
-    ├── interrogating-requirements/   │ signal
+    ├── interrogating-requirements/   │ signal — [Discovery]
     ├── expanding-scope/              │
     ├── sequencing-requirements/      ┘
+    ├── triage/                       [Triage] (+ references/; → /triage)
+    ├── to-spec/                      [Discovery] (+ SPEC-FORMAT.md; shared spec writer)
     ├── domain-modeling/
     ├── codebase-design/              (+ DEEPENING.md, DESIGN-IT-TWICE.md)
     ├── improve-codebase-architecture/(+ HTML-REPORT.md)
@@ -576,9 +653,13 @@ This plugin explicitly does **not**:
   covers discovery→brief; the design-dialogue element is only partly covered. Left open (G8).
   (Every *other* `superpowers` process skill — planning, execution, worktrees, finishing-branch,
   verification, parallel dispatch, skill-writing, skill-discovery — **is** authored here, §6.4/§6.5.)
-- Integrate with any issue tracker. All artifacts are files.
+- Integrate with any issue tracker. All artifacts are files (including `triage`, which logs to
+  `.engineering/<run>/triage/`, not to a tracker).
 - Require `CONTEXT.md`/ADRs — the design/build skills read them when present, never demand them.
 - Persist Tier-2 output — `.engineering/<run>/…` is gitignored runtime scratch, safe to delete.
+- Group skills into filesystem subdirectories — the platform scans `skills/` one level deep, so
+  grouping is by naming + a `skills/README.md` index + `[Group]` `description` tags, not folders
+  (D18, §5.6).
 
 ## 11. Gaps surfaced (per the "identify gaps" instruction)
 
@@ -618,12 +699,14 @@ here, only two threads remain before `superpowers` can be removed:
 
 ## 13. Build sequence (input to writing-plans)
 
-1. Scaffold `engineering/` — `plugin.json`, `README.md` skeleton. Add `.engineering/`
-   to `.gitignore` (Tier-2 root). Establish the run-context convention doc (§5.3). Author the
-   `SessionStart` discovery-bootstrap hook (`hooks/`, §5.5).
-2. Absorb `signal` — move + re-namespace; write `brief.md` to `docs/dashworthy/engineering/specs/`
-   (Tier-1); move run scaffolding to `.engineering/<run>/signal/` and have signal create the
-   `.engineering/.current-run` pointer (§5.3); verify `/signal` resolves.
+1. Scaffold `engineering/` — `plugin.json`, `README.md` skeleton, `skills/README.md` grouping
+   index (D18). Add `.engineering/` to `.gitignore` (Tier-2 root). Establish the run-context
+   convention doc (§5.3). Author the `SessionStart` discovery-bootstrap hook (`hooks/`, §5.5).
+2. Author the shared **`to-spec`** spec-writer + `SPEC-FORMAT.md` (§6.2, D17) — the single writer
+   of Tier-1 specs. Then absorb `signal` — move + re-namespace; signal's discovery brief becomes
+   Tier-2 (`.engineering/<run>/signal/`) and its final step delegates to `to-spec` for the
+   committed spec (§6.1); signal, as the usual first phase, creates the `.engineering/.current-run`
+   pointer (§5.3); verify `/signal` resolves.
 3. Absorb `vernacular` — move skills/command/`reconcile.py`/tests + re-namespace; redirect
    `.vernacular/` → `.engineering/<run>/vernacular/` (skills, receipt schema, and `tests/`);
    read/create the run pointer; run `tests/` green.
@@ -640,7 +723,11 @@ here, only two threads remain before `superpowers` can be removed:
    working state under `.engineering/<run>/implement/`), inspired by superpowers (§6.4). Every
    plan ends with a test-hardening task; `executing-plans` runs it via `conducting-test-hardening`
    (D15).
-10. Author `prototype`, `research`, `resolving-merge-conflicts`, `wizard` (+ `/wizard`).
+10. Author `prototype`, `research`, `resolving-merge-conflicts`, `wizard` (+ `/wizard`), and
+    **`triage`** (+ `/triage`, §6.2) — the problem-isolation entrance. It establishes/joins a run
+    and logs to `.engineering/<run>/triage/`, and dispatches to `diagnosing-bugs` (quick fix),
+    `signal` (grill), or `to-spec` → `writing-plans` (spec-worthy); build it after those targets
+    exist (steps 2, 7, 9).
 11. Author the six workflow foundations (§6.5), inspired by superpowers: `using-git-worktrees`,
     `finishing-a-development-branch`, `verification-before-completion`,
     `dispatching-parallel-agents`, `writing-skills`, `using-skills`. Model-invoked; no commands.
@@ -650,8 +737,11 @@ here, only two threads remain before `superpowers` can be removed:
 13. Rewrite `marketplace.json` (single entry) + root `README.md` (deprecation redirect +
     pipeline overview + non-guarantees).
 14. Delete absorbed top-level `signal/`, `verity/`, `vernacular/` dirs.
-15. Verify: every command (8) resolves; every skill frontmatter valid; the `SessionStart`
-    discovery hook fires; verity runs as a planned step (not a session-start hook); vernacular
-    `tests/` pass; a run-context test shows two phases in one session share a `<run>` (G7); no
-    dangling `signal:`/`verity:`/`vernacular:` refs or `.signal`/`.verity`/`.vernacular` paths;
-    `.engineering/` gitignored; no NOTICE / attribution anywhere (originality, §9).
+15. Verify: every command (9) resolves; every skill frontmatter valid (process-tied ones carry a
+    `[Group]` `description` tag, D18) and `skills/README.md` lists them all; the `SessionStart`
+    discovery hook fires; `/triage` establishes a run and logs to `.engineering/<run>/triage/`;
+    `to-spec` writes the Tier-1 spec (both `signal` and `triage` reach it); verity runs as a
+    planned step (not a session-start hook); vernacular `tests/` pass; a run-context test shows
+    two phases in one session share a `<run>` (G7); no dangling `signal:`/`verity:`/`vernacular:`
+    refs or `.signal`/`.verity`/`.vernacular` paths; `.engineering/` gitignored; no NOTICE /
+    attribution anywhere (originality, §9).
