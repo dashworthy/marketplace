@@ -81,6 +81,9 @@ substrates:
 | `wizard` | **Port** (model + command) | Novel; add `/wizard` since users ask for one by name |
 | `research` | **Port** (model) | Novel; background-agent fact-gathering |
 | `resolving-merge-conflicts` | **Port** (model) | Novel; git-only, clean |
+| `handoff` (productivity) | **Port** (command) | Compact a conversation into a handoff doc; `disable-model-invocation: true` → `/handoff` |
+| `to-questionnaire` (productivity) | **Port** (command) | Externalize an unanswerable decision as a questionnaire; `disable-model-invocation: true` → `/to-questionnaire`; complements `signal` |
+| `wait-what` (productivity) | **Port** (command) | Comms repair — "that last message didn't land, re-pitch it"; reads `CONTEXT.md`/`CONTEXT-MAP.md`; → `/wait-what` |
 | `to-spec` | **Drop** | HEAVY tracker coupling; `signal` already does discovery→brief (a file) |
 | `wayfinder` | **Drop** | HEAVY tracker coupling; a tracker methodology, not worth it file-based |
 | `to-tickets` | **Drop** | HEAVY tracker coupling; planning value overlaps `signal`'s `sequencing-requirements` |
@@ -106,15 +109,17 @@ substrates:
 | **3 · Build & review** | `tdd`, `diagnosing-bugs`, `code-review` | — |
 | **3.5 · Harden tests** | `conducting-test-hardening`, `auditing-test-gaps`, `verifying-test-integrity`, `writing-tests-from-brief` (verity) | — (session-start hook) |
 | **4 · Document** | `clarifying-docblocks`, `rewriting-docblock-prose`, `verifying-docblock-claims` (vernacular) | `/vernacular` |
-| **Cross-cutting** | `wizard`, `research`, `resolving-merge-conflicts` | `/wizard` |
+| **Cross-cutting** | `wizard`, `research`, `resolving-merge-conflicts`, `handoff`, `to-questionnaire`, `wait-what` | `/wizard`, `/handoff`, `/to-questionnaire`, `/wait-what` |
 
 Shared knowledge layer across phases 2–4: `CONTEXT.md` + `docs/adr/`, seeded and maintained by
 `domain-modeling`, read (never required) by `tdd`, `code-review`, `codebase-design`,
 `improve-codebase-architecture`.
 
-Skill count: ~21 (signal 4 + verity 4 + vernacular 3 + Matt 10). Commands: 4
-(`/signal`, `/vernacular`, `/improve-codebase-architecture`, `/wizard`). Hook: 1 (verity
-session-start). If `implement` is reinstated during review, +1 skill and +1 command.
+Unit count: ~21 skills (signal 4 + verity 4 + vernacular 3 + Matt engineering 10) + 3
+productivity commands (handoff, to-questionnaire, wait-what — realized as pure commands, see
+§5.2). Commands total: 7 (`/signal`, `/vernacular`, `/improve-codebase-architecture`,
+`/wizard`, `/handoff`, `/to-questionnaire`, `/wait-what`). Hook: 1 (verity session-start). If
+`implement` is reinstated during review, +1 skill and +1 command.
 
 ### 5.1 File-artifact conventions
 
@@ -137,6 +142,17 @@ at `docs/dashworthy/engineering/specs/2026-08-21-engineering-plugin-design.md`).
   `docs/dashworthy/engineering/specs/` (plus user-supplied paths), replacing the tracker lookup.
 - The `plans/` directory is **reserved now** even though the planner that writes to it is
   deferred to the follow-up spec (G1) — so the convention is stable before the tool exists.
+
+### 5.2 Command realization rule
+
+Two ways a user-invoked (D7) capability is realized, chosen by shape:
+
+- **Skill + thin `/command` wrapper** — when the capability has reference/subfiles, or another
+  skill dispatches it. Applies to `signal`, `vernacular`, `improve-codebase-architecture` (and
+  `implement` if reinstated). The `/command` is a few lines that invoke the skill.
+- **Pure `commands/<name>.md`** — when the capability is a self-contained single-shot with no
+  subfiles and nothing dispatches it. Applies to `handoff`, `to-questionnaire`, `wait-what`.
+  The whole workflow lives in the command file; no skill entry.
 
 ## 6. Adaptation notes, per source
 
@@ -187,6 +203,24 @@ at `docs/dashworthy/engineering/specs/2026-08-21-engineering-plugin-design.md`).
   following repo conventions. Clean.
 - **resolving-merge-conflicts** — copy `SKILL.md`. git-only; clean.
 
+### 6.3 Ported Matt productivity skills (realize as pure commands, §5.2)
+
+Source category is `skills/productivity/` (not `engineering/`); attribute the same way (§9).
+Each is `disable-model-invocation: true` upstream → a `commands/<name>.md` here.
+
+- **handoff → `/handoff`** — compact the conversation into a handoff document for a successor
+  session. Keep the `argument-hint` ("What will the next session be used for?"). Keep writing to
+  the OS temp dir (ephemeral cross-session context; deliberately not a repo artifact), and keep
+  the "suggested skills" section — but update those suggestions to reference `engineering:`
+  skills. Keep secret redaction. Reference existing artifacts under
+  `docs/dashworthy/engineering/specs|plans/`, `CONTEXT.md`, `docs/adr/` rather than duplicating.
+- **to-questionnaire → `/to-questionnaire`** — turn an unanswerable decision into a questionnaire
+  for someone else. Keep writing `to-questionnaire-<slug>.md` to the current directory. Note the
+  natural pairing with `signal`: when discovery surfaces a question the user cannot answer, this
+  externalizes it.
+- **wait-what → `/wait-what`** — comms repair. Reads `CONTEXT.md`/`CONTEXT-MAP.md` (our adopted
+  substrate, D5), writes nothing. Keep the ASD-STE100 Simplified-Technical-English framing.
+
 ## 7. Directory layout
 
 ```
@@ -198,7 +232,10 @@ engineering/
 │   ├── signal.md
 │   ├── vernacular.md
 │   ├── improve-codebase-architecture.md
-│   └── wizard.md
+│   ├── wizard.md
+│   ├── handoff.md                    productivity (pure command, §5.2)
+│   ├── to-questionnaire.md           productivity (pure command, §5.2)
+│   └── wait-what.md                  productivity (pure command, §5.2)
 ├── hooks/
 │   ├── hooks.json
 │   └── session-start.sh              verity's, namespace-updated
@@ -249,7 +286,8 @@ engineering/
 
 - Repo stays MIT (compatible with Matt's MIT).
 - Add a top-level `engineering/NOTICE` crediting Matt Pocock (MIT © 2026) for the ported skills,
-  listing which skills were derived from his repo.
+  listing which skills were derived from his repo — from both `skills/engineering/` and
+  `skills/productivity/`.
 - Each ported skill carries a short attribution line (frontmatter comment or a note near the
   top) pointing to the upstream source.
 - The dashworthy-original skills (signal/verity/vernacular) need no such line.
@@ -290,6 +328,12 @@ G1 (planner) + G2 (connective tissue) + G6 (`implement`), which together finish 
 - Any change to `verity`'s or `vernacular`'s internal proof mechanics beyond re-namespacing.
 - Rewriting Matt's skill *prose* into dashworthy voice — port faithfully first; voice
   alignment is a later, optional pass.
+- **`git-guardrails-claude-code` and `setup-pre-commit`** (Matt's `skills/misc/`). These are
+  repo-guardrail / hygiene tooling, not SDLC-pipeline phases: git-guardrails is a Claude-Code
+  PreToolUse hook + `settings.json` entry that blocks destructive git ops; setup-pre-commit
+  bootstraps Husky + lint-staged + Prettier. They belong in the marketplace but **not in the
+  engineering plugin** — candidate for a separate small `guardrails` (or similar) plugin, its
+  own spec. Recorded here so they are not lost.
 
 ## 13. Build sequence (input to writing-plans)
 
@@ -306,6 +350,8 @@ G1 (planner) + G2 (connective tissue) + G6 (`implement`), which together finish 
 8. Port `improve-codebase-architecture` as a command — sever `grill-with-docs` (G4).
 9. Port `prototype` (neutralize tracker), `research`, `resolving-merge-conflicts`, `wizard`
    (+ `/wizard`).
+9a. Port the three productivity commands as pure `commands/*.md` (§5.2, §6.3): `/handoff`,
+    `/to-questionnaire`, `/wait-what`.
 10. Rewrite `marketplace.json` (single entry) + root `README.md` (deprecation redirect +
     pipeline overview + non-guarantees).
 11. Delete absorbed top-level `signal/`, `verity/`, `vernacular/` dirs.
