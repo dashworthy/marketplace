@@ -1,0 +1,22 @@
+{
+  "name": "engineering",
+  "description": "Full software-development pipeline: discover or triage, shape the design, spec, plan, build with TDD, harden tests, and harden docs — file-based, no tracker.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Andrew Leach",
+    "email": "andrew@leachcreative.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "sdlc",
+    "discovery",
+    "triage",
+    "design",
+    "planning",
+    "tdd",
+    "code-review",
+    "test-hardening",
+    "documentation",
+    "subagents"
+  ]
+}
