@@ -66,7 +66,7 @@ Run artifacts live at `.engineering/<run>/signal/` in the **user's** project —
 
 **Slug** — kebab-case, derived by you from the request in 2–4 words (`add-oauth-login`, `rework-billing-emails`), passed to `run-context.sh` only to seed a brand-new run. It has no effect once a run is active.
 
-**If the directory `run-context.sh` returns already contains artifacts** — `00-request.md` or `brief.md` — report it and ask the user whether to resume that run or treat this as a fresh request. **Never silently overwrite a prior run's artifacts.**
+**If the directory `run-context.sh` returns already contains artifacts** — `00-request.md` or `brief.md` — report it and ask the user whether to **resume that run**, or, if this is a different request entirely, **supply a different slug** so `run-context.sh` can start it as a separate run instead of joining this one. A different slug only produces a different directory when no run is currently active — see above — so if a run is active, resuming is the only real option: say so, rather than offering a choice that will not do what it appears to. **Never silently overwrite a prior run's artifacts**, and never write into an existing run's `signal/` directory as though it were empty.
 
 **What resume means.** There are two stages and one artifact, so resuming is a short table lookup:
 

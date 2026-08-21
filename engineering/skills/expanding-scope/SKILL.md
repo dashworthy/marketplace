@@ -1,6 +1,6 @@
 ---
 name: expanding-scope
-description: "[Discovery] A dispatched beat within stage 1 of the signal discovery pipeline, invoked by engineering:conducting-discovery — reads the draft requirements supplied inline in its dispatch prompt and surfaces what the requester never thought to say, an adjacent capability, a bigger framing of the same problem, and something undervalued in the current scope, as at most five one-line candidates for the user to accept or reject. Runs only as part of the signal pipeline, dispatched by the conductor; it does not self-trigger on general feature or build requests."
+description: "[Discovery] A dispatched beat within stage 1 of the signal discovery pipeline, invoked by engineering:conducting-discovery — reads the draft requirements supplied inline in its dispatch prompt and surfaces what the requester never thought to say, an adjacent capability, a bigger framing of the same problem, and something undervalued in the current scope, as at most five one-line candidates for the user to rule in scope, out of scope, or defer. Runs only as part of the signal pipeline, dispatched by the conductor; it does not self-trigger on general feature or build requests."
 ---
 
 # Expanding Scope
