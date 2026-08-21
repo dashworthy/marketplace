@@ -15,9 +15,11 @@ demonstrated in Matt Pocock's skills (https://github.com/mattpocock/skills) as o
 dashworthy works — original text and structure, nothing copied (see §9).
 
 The larger objective this serves: **eventually remove the `superpowers` plugin.** This spec
-delivers the bulk of that replacement — the skills that stand in for `superpowers`'
-implementation skills (TDD, debugging, code review) plus net-new capability — and explicitly
-defers `superpowers`' connective-tissue skills to a follow-up spec (see §11).
+delivers a near-complete replacement — the skills that stand in for `superpowers`'
+implementation skills (TDD, debugging, code review), its planning + execution pair, **and** its
+connective tissue (worktrees, finishing-branch, verification, parallel dispatch, skill-writing,
+skill-discovery — §6.5), plus net-new capability. The one `superpowers` process skill it does
+**not** directly replace is `brainstorming` (left open, G8).
 
 ## 2. Context
 
@@ -66,10 +68,10 @@ substrates:
 | D8 | Every skill is dashworthy's **own original** work; Matt's skills and `superpowers` are inspiration only. No copying, no attribution, no NOTICE (§9) | User directive: "make these entirely my own" |
 | D9 | Plugin name: `engineering` | Clearest umbrella label; deliberately breaks the evocative-single-word pattern (signal/verity/vernacular) because this is the meta-plugin |
 | D10 | Deprecate standalone `signal`/`vernacular`/`verity` marketplace entries with a README redirect | Clean documented break; existing installs keep working until reinstall |
-| D11 | Defer `superpowers` connective tissue (worktrees, finishing-branch, verification, parallel-dispatch, skill-writing/discovery) to a follow-up spec | Keeps this spec to one coherent deliverable |
+| D11 | Author `superpowers`' connective tissue **in this spec** (worktrees, finishing-branch, verification, parallel-dispatch, skill-writing, skill-discovery — §6.5) | User directive: replace all of superpowers' connective tissue now, not later. Only `brainstorming` is left open (G8) |
 | D12 | Planning + execution authored **in superpowers style**, in this spec (`writing-plans`, `executing-plans` → `/implement`); Matt's tracker planning chain dropped | User directive; closes the planning gap without tracker coupling |
 | D13 | Two file tiers: Tier-1 specs/plans → `docs/dashworthy/engineering/{specs,plans}` (committed); Tier-2 build files → `.engineering/<run>/<name>/` (gitignored, run-first) | User directive; separates durable artifacts from runtime scratch |
-| D14 | New skills adopt the signal/verity/vernacular naming theme where it makes sense; keep strong conventions (tdd, code-review). Proposed names in §5.4, pending confirmation | User directive: cohesive, artisanal feel |
+| D14 | **Ship functional names this pass.** The signal/verity/vernacular artisanal theme (proposed map, §5.4) is deferred to a later cohesion pass. `to-signal` keeps its (explicitly chosen) name | User directive: keep functional for now |
 
 ## 4. Curation ledger — every Matt skill, in or out
 
@@ -121,16 +123,18 @@ not a source to copy.
 | **3.5 · Harden tests** | `conducting-test-hardening`, `auditing-test-gaps`, `verifying-test-integrity`, `writing-tests-from-brief` (verity) | — (session-start hook) |
 | **4 · Document** | `clarifying-docblocks`, `rewriting-docblock-prose`, `verifying-docblock-claims` (vernacular) | `/vernacular` |
 | **Cross-cutting** | `wizard`, `research`, `resolving-merge-conflicts`, `handoff`, `to-signal`, `wait-what` | `/wizard`, `/handoff`, `/to-signal`, `/wait-what` |
+| **Foundations** (workflow discipline) | `using-git-worktrees`, `finishing-a-development-branch`, `verification-before-completion`, `dispatching-parallel-agents`, `writing-skills`, `using-skills` | — |
 
 Shared knowledge layer across phases 2–4: `CONTEXT.md` + `docs/adr/`, seeded and maintained by
 `domain-modeling`, read (never required) by `tdd`, `code-review`, `codebase-design`,
 `improve-codebase-architecture`.
 
-Unit count: ~23 skills (signal 4 + verity 4 + vernacular 3 + Matt engineering 10 + 2 authored
-superpowers-style: `writing-plans`, `executing-plans`) + 3 productivity commands (handoff,
-to-signal, wait-what — realized as pure commands, see §5.2). Commands total: 8
-(`/signal`, `/vernacular`, `/improve-codebase-architecture`, `/implement`, `/wizard`,
-`/handoff`, `/to-signal`, `/wait-what`). Hook: 1 (verity session-start).
+Unit count: ~29 skills (signal 4 + verity 4 + vernacular 3 + Matt-inspired engineering 10 +
+2 planning/execution + 6 workflow foundations) + 3 productivity commands (handoff, to-signal,
+wait-what — realized as pure commands, see §5.2). Commands total: 8 (`/signal`, `/vernacular`,
+`/improve-codebase-architecture`, `/implement`, `/wizard`, `/handoff`, `/to-signal`,
+`/wait-what`). Hook: 1 (verity session-start). This is a large plugin — the trade for it being
+a near-complete `superpowers` replacement plus the design/discovery additions.
 
 ### 5.1 File-artifact conventions
 
@@ -206,15 +210,15 @@ otherwise invoked independently:
 - **New shared mechanism** — see gap G7. The run pointer is the one piece of cross-phase state
   this plugin introduces; every absorbed skill must read/create it the same way.
 
-### 5.4 Naming (artisanal theme)
+### 5.4 Naming (artisanal theme — DEFERRED)
 
-The marketplace's existing skills — `signal`, `verity`, `vernacular` — are evocative, mostly
-single, Latinate quality-nouns. New skills adopt that register **where it makes sense**, so the
-plugin reads as one handcrafted set, not an assembled toolbox. Two guards: keep a conventional
-name when a themed one would hurt discoverability (`tdd`, `code-review`); the themed word is the
-skill *id*, while a plain descriptor lives in the skill's own `description`.
+**Deferred (D14): this pass ships functional names.** The map below is kept as a future cohesion
+pass. The marketplace's existing skills — `signal`, `verity`, `vernacular` — are evocative,
+mostly single, Latinate quality-nouns, and new skills could later adopt that register where it
+makes sense, so the plugin reads as one handcrafted set. Guard: keep conventional names where a
+themed one would hurt discoverability (`tdd`, `code-review`).
 
-Proposed map (author to confirm or replace — the implementation plan uses the confirmed set):
+Proposed map (future — not applied this pass; `to-signal` is the one already-chosen exception):
 
 | Capability | Proposed name | Why |
 |---|---|---|
@@ -336,6 +340,34 @@ copied (§9). They replace Matt's skipped `to-spec`/`to-tickets`/`wayfinder`/`im
 - **Namespacing avoids collision.** As `engineering:writing-plans` / `engineering:executing-plans`
   they coexist with the `superpowers:` originals during the transition (G5).
 
+### 6.5 Authored workflow foundations (superpowers as inspiration)
+
+The six cross-cutting workflow disciplines that make `superpowers` cohere. Authored original,
+inspired by superpowers' approach (§9) — original text, nothing copied. Model-invoked (they fire
+by discipline, not by command); no new commands.
+
+- **using-git-worktrees** — ensure work happens in an isolated workspace; prefer the harness's
+  native worktree tool (e.g. `EnterWorktree`), fall back to `git worktree`. Detect existing
+  isolation first.
+- **finishing-a-development-branch** — when work is complete and green, present structured
+  options for integrating it (merge / PR / cleanup) and carry out the choice.
+- **verification-before-completion** — before claiming done/fixed/passing, run the verification
+  commands and confirm output; evidence before assertions. (Complements verity, which hardens
+  the tests themselves.)
+- **dispatching-parallel-agents** — a general primitive for fanning out 2+ independent tasks
+  with no shared state; distinct from `executing-plans`' plan-scoped subagent mode.
+- **writing-skills** — author, edit, and verify skills (the meta-skill for growing this plugin);
+  makes the plugin self-extending as it diverges (§9).
+- **using-skills** — the skill-discovery discipline: how to find and invoke the right skill
+  before acting. This is dashworthy's own equivalent of `superpowers`' bootstrap meta-skill;
+  named `using-skills` (not `using-superpowers`) precisely because it is not superpowers.
+
+> Residual note: `superpowers`' `brainstorming` (approval-gated design dialogue) is **not** one
+> of these six and is only partly covered by `signal` (discovery→brief). Whether to author a
+> dashworthy `brainstorming` is left open — flagged in G8, not built here — as it is the one
+> `superpowers` process skill this spec does not directly replace. `subagent-driven-development`
+> is covered by `executing-plans`' subagent mode (§6.4).
+
 ## 7. Directory layout
 
 ```
@@ -385,7 +417,13 @@ engineering/
     ├── verifying-docblock-claims/    ┘
     ├── wizard/
     ├── research/
-    └── resolving-merge-conflicts/
+    ├── resolving-merge-conflicts/
+    ├── using-git-worktrees/            ┐
+    ├── finishing-a-development-branch/ │ workflow foundations
+    ├── verification-before-completion/ │ (superpowers-inspired,
+    ├── dispatching-parallel-agents/    │  authored original)
+    ├── writing-skills/                 │
+    └── using-skills/                   ┘
 ```
 
 `docs/dashworthy/engineering/{specs,plans}/` (Tier-1) and `.engineering/<run>/…` (Tier-2) are
@@ -433,10 +471,10 @@ idea, method, or workflow; so dashworthy re-derives the method and writes it fre
 
 This plugin explicitly does **not**:
 
-- Replace all of `superpowers`' connective tissue yet — worktrees, finishing-a-branch, the
-  verification-before-completion discipline, a general parallel-agent dispatch primitive,
-  skill-writing, and skill-discovery remain deferred (§11). (Planning and execution **are**
-  provided, via authored `writing-plans` / `executing-plans` — §6.4.)
+- Directly replace `superpowers`' `brainstorming` (approval-gated design dialogue). `signal`
+  covers discovery→brief; the design-dialogue element is only partly covered. Left open (G8).
+  (Every *other* `superpowers` process skill — planning, execution, worktrees, finishing-branch,
+  verification, parallel dispatch, skill-writing, skill-discovery — **is** authored here, §6.4/§6.5.)
 - Integrate with any issue tracker. All artifacts are files.
 - Require `CONTEXT.md`/ADRs — the design/build skills read them when present, never demand them.
 - Persist Tier-2 output — `.engineering/<run>/…` is gitignored runtime scratch, safe to delete.
@@ -446,25 +484,29 @@ This plugin explicitly does **not**:
 | # | Gap | Disposition |
 |---|---|---|
 | G1 | ~~Planning gap.~~ **Resolved in this spec.** Authored superpowers-style `writing-plans` + `executing-plans` (§6.4) close the brief→plan→execute path; plans land in `docs/dashworthy/engineering/plans/`. | Build here, not deferred. |
-| G2 | **Connective tissue.** worktrees, finishing-a-branch, verification-before-completion, dispatching-parallel-agents, writing-skills, using-superpowers have no equivalent in Matt's set or dashworthy. | **Follow-up spec.** Authored original, inspired by superpowers' approach (§9) — no copying. |
+| G2 | ~~**Connective tissue.**~~ **Resolved in this spec.** worktrees, finishing-a-branch, verification-before-completion, dispatching-parallel-agents, writing-skills, using-skills — the six workflow disciplines that had no equivalent in Matt's set or dashworthy. | Build here (§6.5). Authored original, inspired by superpowers' approach (§9) — no copying. |
 | G3 | **CONTEXT/ADR templates.** `domain-modeling` needs `CONTEXT-FORMAT.md`/`ADR-FORMAT.md` format templates. | Author original dashworthy templates; the CONTEXT.md-glossary + lightweight-ADR pattern is a well-known convention, so no source needed. |
 | G4 | **`grill-with-docs` removal.** `improve-codebase-architecture` leans on it. | Rewire to `codebase-design` + `domain-modeling` (§6.2). Verify the loop still terminates sensibly. |
 | G5 | **Transition-period name overlap.** While `superpowers` is still installed, some authored skills (`engineering:tdd`, `engineering:code-review`, `engineering:writing-plans`/`executing-plans`) sit alongside their `superpowers` counterparts (test-driven-development, requesting-code-review, writing-plans/executing-plans). | Namespacing keeps them distinct; the duplication resolves when `superpowers` is removed. Note in README. |
 | G6 | ~~`implement` stranding.~~ **Resolved.** Superseded by authored `writing-plans` + `executing-plans` (§4 note, §6.4). | Build here, not deferred. |
 | G7 | **Run-context mechanism (new).** Run-first Tier-2 (§5.3) introduces the shared `.engineering/.current-run` pointer — the one piece of cross-phase state. Risk: phases must read/create it identically, or a run fragments across ids. | Implementation must give every absorbed skill the same read-or-create-pointer step; add a test that two phases in one session share a `<run>`. |
+| G8 | **Brainstorming residual.** `superpowers`' `brainstorming` (approval-gated design dialogue → spec) is the one process skill this spec does not directly replace. `signal` covers discovery→brief, but its interrogation register differs from brainstorming's collaborative design dialogue (§6.5 residual note). | **Left open — not built here.** Decide later whether to author a dashworthy `brainstorming`, extend `signal` with a design-dialogue mode, or leave it to `signal` + `writing-plans`. Does not block `superpowers` removal on its own. |
 
-### Follow-up spec (documented, not built here)
+### After this spec (documented, not built here)
 
-A second plugin/spec — working title `scaffold` or an addition to `engineering` — covering the
-remaining **G2 connective tissue**: worktrees, finishing-a-branch, verification-before-completion,
-a general parallel-agent dispatch primitive, skill-writing, and skill-discovery — which together
-finish the `superpowers` removal. (Planning/execution are no longer part of the follow-up; they
-ship here per §6.4.)
+With planning/execution (§6.4) and the six connective-tissue foundations (§6.5) both authored
+here, only two threads remain before `superpowers` can be removed:
+
+- **`brainstorming` (G8)** — decide whether to author a dashworthy equivalent, extend `signal`,
+  or accept `signal` + `writing-plans` as sufficient. A scoping question, not a committed build.
+- **The `guardrails` plugin (§12)** — `git-guardrails-claude-code` + `setup-pre-commit`, a
+  separate small plugin with its own spec. Repo-hygiene tooling, not an SDLC phase; unrelated to
+  the `superpowers` removal.
 
 ## 12. Out of scope
 
-- Removing the `superpowers` plugin itself (that happens once the follow-up spec lands and the
-  replacement is proven in daily use).
+- Removing the `superpowers` plugin itself (that happens once this replacement is proven in daily
+  use, and the `brainstorming` question, G8, is settled).
 - Any change to `verity`'s or `vernacular`'s internal proof mechanics beyond re-namespacing.
 - **`git-guardrails-claude-code` and `setup-pre-commit`** (Matt's `skills/misc/`). These are
   repo-guardrail / hygiene tooling, not SDLC-pipeline phases: git-guardrails is a Claude-Code
@@ -495,12 +537,15 @@ ship here per §6.4.)
 9. Author `writing-plans` (→ `docs/.../plans/`) and `executing-plans` (+ `/implement`,
    working state under `.engineering/<run>/implement/`), inspired by superpowers (§6.4).
 10. Author `prototype`, `research`, `resolving-merge-conflicts`, `wizard` (+ `/wizard`).
-11. Author the three productivity commands as pure `commands/*.md` (§5.2, §6.3): `/handoff`,
+11. Author the six workflow foundations (§6.5), inspired by superpowers: `using-git-worktrees`,
+    `finishing-a-development-branch`, `verification-before-completion`,
+    `dispatching-parallel-agents`, `writing-skills`, `using-skills`. Model-invoked; no commands.
+12. Author the three productivity commands as pure `commands/*.md` (§5.2, §6.3): `/handoff`,
     `/to-signal`, `/wait-what`.
-12. Rewrite `marketplace.json` (single entry) + root `README.md` (deprecation redirect +
+13. Rewrite `marketplace.json` (single entry) + root `README.md` (deprecation redirect +
     pipeline overview + non-guarantees).
-13. Delete absorbed top-level `signal/`, `verity/`, `vernacular/` dirs.
-14. Verify: every command (8) resolves; every skill frontmatter valid; hook fires; vernacular
+14. Delete absorbed top-level `signal/`, `verity/`, `vernacular/` dirs.
+15. Verify: every command (8) resolves; every skill frontmatter valid; hook fires; vernacular
     `tests/` pass; a run-context test shows two phases in one session share a `<run>` (G7); no
     dangling `signal:`/`verity:`/`vernacular:` refs or `.signal`/`.verity`/`.vernacular` paths;
     `.engineering/` gitignored; no NOTICE / attribution anywhere (originality, §9).
