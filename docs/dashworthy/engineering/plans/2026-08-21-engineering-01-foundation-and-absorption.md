@@ -385,10 +385,17 @@ assert m, "no frontmatter block"
 fm=m.group(1)
 name=re.search(r'^name:\s*(.+)$', fm, re.M)
 desc=re.search(r'^description:\s*(.+)$', fm, re.M)
-assert name and name.group(1).strip()==skill, f"name must equal dir '{skill}'"
-assert desc and desc.group(1).strip(), "description required"
+def unquote(s):
+    s = s.strip()
+    if len(s) >= 2 and s[0] == s[-1] and s[0] in "\"'":
+        s = s[1:-1]
+    return s
+name_v = unquote(name.group(1)) if name else None
+desc_v = unquote(desc.group(1)) if desc else None
+assert name and name_v == skill, f"name must equal dir '{skill}'"
+assert desc and desc_v, "description required"
 if want:
-    assert desc.group(1).strip().startswith(want), f"description must open with {want}"
+    assert desc_v.startswith(want), f"description must open with {want}"
 print("ok",skill)
 PY
 echo "PASS frontmatter $skill"
