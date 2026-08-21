@@ -72,6 +72,7 @@ substrates:
 | D12 | Planning + execution authored **in superpowers style**, in this spec (`writing-plans`, `executing-plans` → `/implement`); Matt's tracker planning chain dropped | User directive; closes the planning gap without tracker coupling |
 | D13 | Two file tiers: Tier-1 specs/plans → `docs/dashworthy/engineering/{specs,plans}` (committed); Tier-2 build files → `.engineering/<run>/<name>/` (gitignored, run-first) | User directive; separates durable artifacts from runtime scratch |
 | D14 | **Ship functional names this pass.** The signal/verity/vernacular artisanal theme (proposed map, §5.4) is deferred to a later cohesion pass. `to-signal` keeps its (explicitly chosen) name | User directive: keep functional for now |
+| D15 | **Invert the hook model.** A `SessionStart` hook injects a *discovery bootstrap* (superpowers-style) that surfaces `using-skills` + nudges `/signal` before building (§5.5). Verity's own session-start hook is **retired**; test-hardening becomes a **planned step** (`writing-plans` bakes it in, `executing-plans` runs it) plus a **finish-time safety net** in `finishing-a-development-branch` | User directive: call signal like superpowers does; tie verity to the plan, not a session-start hook |
 
 ## 4. Curation ledger — every Matt skill, in or out
 
@@ -120,7 +121,7 @@ not a source to copy.
 | **2 · Design** | `codebase-design`, `improve-codebase-architecture`, `prototype` | `/improve-codebase-architecture` |
 | **2.5 · Plan** | `writing-plans` (authored, superpowers-style) | — |
 | **3 · Build & execute** | `tdd`, `diagnosing-bugs`, `code-review`, `executing-plans` (authored, superpowers-style) | `/implement` |
-| **3.5 · Harden tests** | `conducting-test-hardening`, `auditing-test-gaps`, `verifying-test-integrity`, `writing-tests-from-brief` (verity) | — (session-start hook) |
+| **3.5 · Harden tests** | `conducting-test-hardening`, `auditing-test-gaps`, `verifying-test-integrity`, `writing-tests-from-brief` (verity) | — (planned step, §6.4; finish-time net, §6.5) |
 | **4 · Document** | `clarifying-docblocks`, `rewriting-docblock-prose`, `verifying-docblock-claims` (vernacular) | `/vernacular` |
 | **Cross-cutting** | `wizard`, `research`, `resolving-merge-conflicts`, `handoff`, `to-signal`, `wait-what` | `/wizard`, `/handoff`, `/to-signal`, `/wait-what` |
 | **Foundations** (workflow discipline) | `using-git-worktrees`, `finishing-a-development-branch`, `verification-before-completion`, `dispatching-parallel-agents`, `writing-skills`, `using-skills` | — |
@@ -133,8 +134,8 @@ Unit count: ~29 skills (signal 4 + verity 4 + vernacular 3 + Matt-inspired engin
 2 planning/execution + 6 workflow foundations) + 3 productivity commands (handoff, to-signal,
 wait-what — realized as pure commands, see §5.2). Commands total: 8 (`/signal`, `/vernacular`,
 `/improve-codebase-architecture`, `/implement`, `/wizard`, `/handoff`, `/to-signal`,
-`/wait-what`). Hook: 1 (verity session-start). This is a large plugin — the trade for it being
-a near-complete `superpowers` replacement plus the design/discovery additions.
+`/wait-what`). Hook: 1 (`SessionStart` discovery bootstrap, §5.5). This is a large plugin — the
+trade for it being a near-complete `superpowers` replacement plus the design/discovery additions.
 
 ### End-to-end flow
 
@@ -155,11 +156,13 @@ flowchart TD
       p2["2 · Design<br/>/improve-codebase-architecture<br/>codebase-design · prototype"]
       p25["2.5 · Plan<br/>writing-plans"]
       p3["3 · Build and execute<br/>/implement<br/>tdd · diagnosing-bugs · code-review · executing-plans"]
-      p35["3.5 · Harden tests<br/>verity — session-start hook"]
+      p35["3.5 · Harden tests<br/>verity — planned step"]
       p4["4 · Document<br/>/vernacular"]
       p1 --> p2 --> p25 --> p3 --> p35 --> p4
     end
 
+    hook["SessionStart hook<br/>discovery bootstrap (§5.5)"]
+    hook -. nudges .-> p1
     req --> p1
     p4 --> done
 
@@ -315,6 +318,22 @@ signal/verity/vernacular and their internal sub-skills keep their current names.
 this spec, capabilities are referred to by their functional names for clarity; §5.4 is the
 authority on the shipped skill id.
 
+### 5.5 Session-start hook — discovery bootstrap (D15)
+
+Mirrors how `superpowers` surfaces its process skills at the top of a session. A single
+`SessionStart` hook (`hooks/hooks.json` + `hooks/session-start.sh`) injects a short bootstrap
+that:
+
+- points at the `using-skills` foundation (§6.5) — *invoke the right skill before acting*; and
+- nudges **discovery-first**: when a request is a feature or a vague ask, run `/signal` (or
+  `conducting-discovery`) to turn it into a brief before designing or building.
+
+This is the engineering analog of superpowers' "brainstorm before building" bootstrap, pointed
+at `signal`. It **injects guidance only — it never blocks**; the `using-skills` discipline does
+the enforcing. It replaces verity's old session-start reminder, which is retired: verity is now
+triggered by the plan and at finish time (D15, §6.1/§6.4/§6.5), not by a session-start hook.
+This plugin ships exactly one hook.
+
 ## 6. Adaptation notes, per source
 
 ### 6.1 Absorbed dashworthy plugins (behavior-preserving move)
@@ -331,13 +350,16 @@ authority on the shipped skill id.
   `.vernacular/` → `.engineering/<run>/vernacular/` in the skills, the receipt schema, and the
   test suite (`e2e.sh` and others reference `.vernacular`); read/create the run pointer (§5.3).
   Keep the reconcile test suite green — it is the plugin's proof harness.
-- **verity → engineering.** Move 4 skills + `hooks/hooks.json` + `hooks/session-start.sh` +
-  the `conducting-test-hardening/references/*`. Re-namespace. **Tier-2:** redirect `.verity/`
-  and `.verity/briefs/` → `.engineering/<run>/verity/` (config + working briefs) across the
-  skills and `brief-schema.md`; read/create the run pointer (§5.3). The session-start hook
-  injects the "Verity applies once implementation work is finished… invoke
-  `conducting-test-hardening`" reminder — update the skill reference to the new namespace and
-  confirm the hook still fires.
+- **verity → engineering.** Move the 4 skills + the `conducting-test-hardening/references/*`.
+  Re-namespace. **Tier-2:** redirect `.verity/` and `.verity/briefs/` →
+  `.engineering/<run>/verity/` (config + working briefs) across the skills and `brief-schema.md`;
+  read/create the run pointer (§5.3). **Retire verity's session-start hook** (D15): its "harden
+  once implementation is done" trigger no longer rides a session-start reminder. Test-hardening
+  becomes a **planned step** — `writing-plans` bakes a Phase-3.5 hardening task into every plan
+  and `executing-plans` runs it (§6.4) — plus a **finish-time safety net** in
+  `finishing-a-development-branch` (§6.5) so plan-less, ad-hoc work is still hardened before a
+  branch is finished. The plugin's one `SessionStart` hook is now the discovery bootstrap (§5.5),
+  not verity's reminder.
 
 ### 6.2 Original skills, inspired by Matt's (§9)
 
@@ -402,12 +424,15 @@ copied (§9). They replace Matt's skipped `to-spec`/`to-tickets`/`wayfinder`/`im
 - **writing-plans** (Phase 2.5, model-invoked). Turns a spec/brief in
   `docs/dashworthy/engineering/specs/` into an ordered implementation plan written to
   `docs/dashworthy/engineering/plans/<YYYY-MM-DD>-<topic>.md` — steps sequenced so nothing
-  precedes what it depends on, with review checkpoints and explicit TDD integration points.
-  Reads `CONTEXT.md`/ADRs when present. Style model: `superpowers:writing-plans`.
+  precedes what it depends on, with review checkpoints and explicit TDD integration points, and
+  **a closing test-hardening task** (Phase 3.5) that invokes `conducting-test-hardening` so
+  verity runs as a planned step, not a session-start reminder (D15). Reads `CONTEXT.md`/ADRs when
+  present. Style model: `superpowers:writing-plans`.
 - **executing-plans** (Phase 3, skill + `/implement`). Executes a plan from
   `docs/dashworthy/engineering/plans/` task by task, each task driven through `engineering:tdd`
-  and gated by `engineering:code-review`, pausing at the plan's review checkpoints. Supports an
-  optional subagent-driven mode for independent tasks (style model:
+  and gated by `engineering:code-review`, pausing at the plan's review checkpoints, and running
+  the plan's closing test-hardening task through `conducting-test-hardening` when reached (D15).
+  Supports an optional subagent-driven mode for independent tasks (style model:
   `superpowers:executing-plans` + `superpowers:subagent-driven-development`). Working state
   under `.engineering/<run>/implement/` (§5.3).
 - **Namespacing avoids collision.** As `engineering:writing-plans` / `engineering:executing-plans`
@@ -423,7 +448,10 @@ by discipline, not by command); no new commands.
   native worktree tool (e.g. `EnterWorktree`), fall back to `git worktree`. Detect existing
   isolation first.
 - **finishing-a-development-branch** — when work is complete and green, present structured
-  options for integrating it (merge / PR / cleanup) and carry out the choice.
+  options for integrating it (merge / PR / cleanup) and carry out the choice. **Verity safety net
+  (D15):** if the branch's implementation was never hardened (no plan, or the plan's hardening
+  task was skipped), prompt to run `conducting-test-hardening` before finishing — this is where
+  verity's always-on coverage lives now that its session-start hook is retired.
 - **verification-before-completion** — before claiming done/fixed/passing, run the verification
   commands and confirm output; evidence before assertions. (Complements verity, which hardens
   the tests themselves.)
@@ -458,7 +486,7 @@ engineering/
 │   └── wait-what.md                  productivity (pure command, §5.2)
 ├── hooks/
 │   ├── hooks.json
-│   └── session-start.sh              verity's, namespace-updated
+│   └── session-start.sh              discovery bootstrap (§5.5)
 ├── scripts/
 │   ├── reconcile.py                  vernacular
 │   ├── hitl-loop.template.sh         diagnosing-bugs
@@ -591,16 +619,17 @@ here, only two threads remain before `superpowers` can be removed:
 ## 13. Build sequence (input to writing-plans)
 
 1. Scaffold `engineering/` — `plugin.json`, `README.md` skeleton. Add `.engineering/`
-   to `.gitignore` (Tier-2 root). Establish the run-context convention doc (§5.3).
+   to `.gitignore` (Tier-2 root). Establish the run-context convention doc (§5.3). Author the
+   `SessionStart` discovery-bootstrap hook (`hooks/`, §5.5).
 2. Absorb `signal` — move + re-namespace; write `brief.md` to `docs/dashworthy/engineering/specs/`
    (Tier-1); move run scaffolding to `.engineering/<run>/signal/` and have signal create the
    `.engineering/.current-run` pointer (§5.3); verify `/signal` resolves.
 3. Absorb `vernacular` — move skills/command/`reconcile.py`/tests + re-namespace; redirect
    `.vernacular/` → `.engineering/<run>/vernacular/` (skills, receipt schema, and `tests/`);
    read/create the run pointer; run `tests/` green.
-4. Absorb `verity` — move skills/hooks/references + re-namespace; redirect `.verity/*` →
-   `.engineering/<run>/verity/`; read/create the run pointer; verify the session-start hook fires
-   and points at the new `conducting-test-hardening`.
+4. Absorb `verity` — move the 4 skills + `references/` + re-namespace; redirect `.verity/*` →
+   `.engineering/<run>/verity/`; read/create the run pointer. **Retire verity's session-start
+   hook** (D15): hardening becomes a planned step (step 9) + a finish-time safety net (step 11).
 5. Author `codebase-design` (deep-module vocabulary) — the design-phase foundation.
 6. Author `domain-modeling` + dashworthy `CONTEXT`/`ADR` format templates (resolve G3).
 7. Author `tdd`, `diagnosing-bugs`, `code-review` — `code-review` reads its spec source from
@@ -608,17 +637,21 @@ here, only two threads remain before `superpowers` can be removed:
 8. Author `improve-codebase-architecture` as a command — no grilling dependency; it leans on
    `codebase-design` + `domain-modeling` (G4).
 9. Author `writing-plans` (→ `docs/.../plans/`) and `executing-plans` (+ `/implement`,
-   working state under `.engineering/<run>/implement/`), inspired by superpowers (§6.4).
+   working state under `.engineering/<run>/implement/`), inspired by superpowers (§6.4). Every
+   plan ends with a test-hardening task; `executing-plans` runs it via `conducting-test-hardening`
+   (D15).
 10. Author `prototype`, `research`, `resolving-merge-conflicts`, `wizard` (+ `/wizard`).
 11. Author the six workflow foundations (§6.5), inspired by superpowers: `using-git-worktrees`,
     `finishing-a-development-branch`, `verification-before-completion`,
     `dispatching-parallel-agents`, `writing-skills`, `using-skills`. Model-invoked; no commands.
+    `finishing-a-development-branch` carries the verity finish-time safety net (D15).
 12. Author the three productivity commands as pure `commands/*.md` (§5.2, §6.3): `/handoff`,
     `/to-signal`, `/wait-what`.
 13. Rewrite `marketplace.json` (single entry) + root `README.md` (deprecation redirect +
     pipeline overview + non-guarantees).
 14. Delete absorbed top-level `signal/`, `verity/`, `vernacular/` dirs.
-15. Verify: every command (8) resolves; every skill frontmatter valid; hook fires; vernacular
+15. Verify: every command (8) resolves; every skill frontmatter valid; the `SessionStart`
+    discovery hook fires; verity runs as a planned step (not a session-start hook); vernacular
     `tests/` pass; a run-context test shows two phases in one session share a `<run>` (G7); no
     dangling `signal:`/`verity:`/`vernacular:` refs or `.signal`/`.verity`/`.vernacular` paths;
     `.engineering/` gitignored; no NOTICE / attribution anywhere (originality, §9).
