@@ -32,9 +32,11 @@ do not go looking for material elsewhere. This skill starts only from what it is
 
 Tier-1, and only Tier-1: `docs/dashworthy/engineering/specs/<YYYY-MM-DD>-<topic>.md`.
 
-`<topic>` comes from the active run slug when one is available — read it from
-`.engineering/.current-run` rather than re-deriving it — and falls back to a slug of the
-spec's own title only when no run is active. `<YYYY-MM-DD>` is today's date, not the
+`<topic>` is the active run's slug when a run is available. The pointer
+`.engineering/.current-run` holds the full run id in the form `<YYYY-MM-DD>-<slug>`; use only
+the `<slug>` portion — everything after the leading `YYYY-MM-DD-` date prefix — not the whole
+pointer value, or the date is duplicated in the filename. When no run is active, fall back to a
+slug derived from the spec's own title. `<YYYY-MM-DD>` in the filename is today's date, not the
 run's start date, if the two differ.
 
 This skill never writes into `.engineering/`. That tree belongs to the entrances — it is
