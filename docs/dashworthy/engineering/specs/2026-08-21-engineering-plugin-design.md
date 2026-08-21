@@ -10,8 +10,9 @@
 Assemble a single `engineering` plugin in the `dashworthy` marketplace that is a full
 software-development pipeline: discovery → design → build → test-hardening → documentation,
 plus cross-cutting utilities. It is built by absorbing the three existing dashworthy plugins
-(`signal`, `verity`, `vernacular`) and porting a curated, adapted subset of Matt Pocock's
-engineering skills (https://github.com/mattpocock/skills, MIT © Matt Pocock 2026).
+(`signal`, `verity`, `vernacular`) and **reimplementing** a curated subset of the *techniques*
+demonstrated in Matt Pocock's skills (https://github.com/mattpocock/skills) as original
+dashworthy works — original text and structure, nothing copied (see §9).
 
 The larger objective this serves: **eventually remove the `superpowers` plugin.** This spec
 delivers the bulk of that replacement — the skills that stand in for `superpowers`'
@@ -58,52 +59,56 @@ substrates:
 | D1 | One `engineering` plugin holding the whole pipeline | User chose a single umbrella plugin; the SDLC phases make it coherent despite being large |
 | D2 | Absorb `signal`, `vernacular`, **and** `verity` into it | They are the discovery / documentation / test-hardening phases of the same pipeline |
 | D3 | Marketplace collapses to a single plugin | Consequence of D1+D2; `verity` folded in per explicit choice |
-| D4 | Curate Matt's set; port only what adds capability and fits file-based philosophy | "Works well with existing skills" = curation, not bulk copy |
+| D4 | Curate; build only what adds capability and fits the file-based philosophy | "Works well with existing skills" = curation, not bulk import |
 | D5 | Adopt `CONTEXT.md` + `docs/adr/` as a dashworthy convention (via `domain-modeling`) | It is the connective tissue that makes the design/build skills cohere; self-contained |
 | D6 | Reject tracker coupling; everything file-based | Matches dashworthy philosophy; `signal` already owns the discovery/spec front |
 | D7 | User-invoked skills become `/commands` | User's explicit rule |
-| D8 | Preserve MIT license + attribute Matt Pocock on every ported skill | License compliance + good citizenship |
+| D8 | Every skill is dashworthy's **own original** work; Matt's skills and `superpowers` are inspiration only. No copying, no attribution, no NOTICE (§9) | User directive: "make these entirely my own" |
 | D9 | Plugin name: `engineering` | Clearest umbrella label; deliberately breaks the evocative-single-word pattern (signal/verity/vernacular) because this is the meta-plugin |
 | D10 | Deprecate standalone `signal`/`vernacular`/`verity` marketplace entries with a README redirect | Clean documented break; existing installs keep working until reinstall |
 | D11 | Defer `superpowers` connective tissue (worktrees, finishing-branch, verification, parallel-dispatch, skill-writing/discovery) to a follow-up spec | Keeps this spec to one coherent deliverable |
 | D12 | Planning + execution authored **in superpowers style**, in this spec (`writing-plans`, `executing-plans` → `/implement`); Matt's tracker planning chain dropped | User directive; closes the planning gap without tracker coupling |
 | D13 | Two file tiers: Tier-1 specs/plans → `docs/dashworthy/engineering/{specs,plans}` (committed); Tier-2 build files → `.engineering/<run>/<name>/` (gitignored, run-first) | User directive; separates durable artifacts from runtime scratch |
+| D14 | New skills adopt the signal/verity/vernacular naming theme where it makes sense; keep strong conventions (tdd, code-review). Proposed names in §5.4, pending confirmation | User directive: cohesive, artisanal feel |
 
 ## 4. Curation ledger — every Matt skill, in or out
 
+**Author** = build an original dashworthy skill for this capability, with Matt's skill as
+inspiration only (§9). **Skip** = not building it. The "Matt skill" column names the inspiration,
+not a source to copy.
+
 | Matt skill | Verdict | Reason |
 |---|---|---|
-| `codebase-design` | **Port** (model) | Novel deep-module vocabulary; foundation for `improve-codebase-architecture` |
-| `improve-codebase-architecture` | **Port** (command) | Novel; `disable-model-invocation: true` → `/improve-codebase-architecture` |
-| `prototype` | **Port** (model) | Novel; neutralize tracker "issue" references |
-| `tdd` | **Port** (model) | Direct replacement for `superpowers` test-driven-development |
-| `diagnosing-bugs` | **Port** (model) | Direct replacement for `superpowers` systematic-debugging |
-| `code-review` | **Port** (model) | Direct replacement for `superpowers` requesting/receiving-code-review; rewire spec-source to file-based |
-| `domain-modeling` | **Port** (model) | Owns the CONTEXT.md/ADR substrate (D5) |
-| `wizard` | **Port** (model + command) | Novel; add `/wizard` since users ask for one by name |
-| `research` | **Port** (model) | Novel; background-agent fact-gathering |
-| `resolving-merge-conflicts` | **Port** (model) | Novel; git-only, clean |
-| `handoff` (productivity) | **Port** (command) | Compact a conversation into a handoff doc; `disable-model-invocation: true` → `/handoff` |
-| `to-questionnaire` (productivity) | **Port** (command) | Externalize an unanswerable decision as a questionnaire; `disable-model-invocation: true` → `/to-questionnaire`; complements `signal` |
-| `wait-what` (productivity) | **Port** (command) | Comms repair — "that last message didn't land, re-pitch it"; reads `CONTEXT.md`/`CONTEXT-MAP.md`; → `/wait-what` |
-| `to-spec` | **Drop** | HEAVY tracker coupling; `signal` already does discovery→brief (a file) |
-| `wayfinder` | **Drop** | HEAVY tracker coupling; a tracker methodology, not worth it file-based |
-| `to-tickets` | **Drop** | HEAVY tracker coupling; planning value overlaps `signal`'s `sequencing-requirements` |
-| `implement` | **Drop — superseded** | Replaced by an authored superpowers-style `executing-plans` (+ `/implement`), paired with an authored `writing-plans`. See §4 note and §6.4 |
-| `triage` | **Drop** | Needs Matt's tracker + label infra |
-| `grill-with-docs` | **Drop** | Interactive grilling loop; its role inside `improve-codebase-architecture` is replaced by `codebase-design` + `domain-modeling` |
-| `ask-matt` | **Drop** | Personal routing skill referencing Matt's own system |
-| `setup-matt-pocock-skills` | **Drop** | Seeds the tracker substrate we reject |
+| `codebase-design` | **Author** (model) | Novel deep-module vocabulary; foundation for `improve-codebase-architecture` |
+| `improve-codebase-architecture` | **Author** (command) | Novel; `disable-model-invocation: true` → `/improve-codebase-architecture` |
+| `prototype` | **Author** (model) | Novel; neutralize tracker "issue" references |
+| `tdd` | **Author** (model) | Direct replacement for `superpowers` test-driven-development |
+| `diagnosing-bugs` | **Author** (model) | Direct replacement for `superpowers` systematic-debugging |
+| `code-review` | **Author** (model) | Direct replacement for `superpowers` requesting/receiving-code-review; rewire spec-source to file-based |
+| `domain-modeling` | **Author** (model) | Owns the CONTEXT.md/ADR substrate (D5) |
+| `wizard` | **Author** (model + command) | Novel; add `/wizard` since users ask for one by name |
+| `research` | **Author** (model) | Novel; background-agent fact-gathering |
+| `resolving-merge-conflicts` | **Author** (model) | Novel; git-only, clean |
+| `handoff` (productivity) | **Author** (command) | Compact a conversation into a handoff doc; `disable-model-invocation: true` → `/handoff` |
+| `to-signal` (productivity) | **Author** (command) | `/to-signal` — turn a decision you can't answer into a questionnaire for someone else, whose answers feed back into discovery (hence the name); inspiration: Matt's `to-questionnaire` |
+| `wait-what` (productivity) | **Author** (command) | Comms repair — "that last message didn't land, re-pitch it"; reads `CONTEXT.md`/`CONTEXT-MAP.md`; → `/wait-what` |
+| `to-spec` | **Skip** | HEAVY tracker coupling; `signal` already does discovery→brief (a file) |
+| `wayfinder` | **Skip** | HEAVY tracker coupling; a tracker methodology, not worth it file-based |
+| `to-tickets` | **Skip** | HEAVY tracker coupling; planning value overlaps `signal`'s `sequencing-requirements` |
+| `implement` | **Skip — superseded** | Replaced by an authored, superpowers-inspired `executing-plans` (+ `/implement`), paired with an authored `writing-plans`. See §4 note and §6.4 |
+| `triage` | **Skip** | Needs Matt's tracker + label infra |
+| `grill-with-docs` | **Skip** | Interactive grilling loop; its role inside `improve-codebase-architecture` is replaced by `codebase-design` + `domain-modeling` |
+| `ask-matt` | **Skip** | Personal routing skill referencing Matt's own system |
+| `setup-matt-pocock-skills` | **Skip** | Seeds the tracker substrate we reject |
 
-> Note on `implement` (resolved): rather than port Matt's `implement`, this plugin **authors a
-> superpowers-style planning + execution pair** — a `writing-plans` skill (spec → ordered plan
-> with review checkpoints) and an `executing-plans` skill (execute a plan against `/tdd` +
+> Note on `implement` (resolved): rather than adopt Matt's `implement`, this plugin **authors a
+> planning + execution pair, inspired by superpowers** — a `writing-plans` skill (spec → ordered
+> plan with review checkpoints) and an `executing-plans` skill (execute a plan against `/tdd` +
 > `/code-review`, with review gates and optional subagent-driven mode), surfaced as
 > `/implement`. This is the user's directed choice ("for planning and implement, follow more of
 > the superpowers style"). It closes the planning gap (former G1) inside this spec and removes
 > the stranding concern. Matt's tracker-coupled `to-spec`/`to-tickets`/`wayfinder`/`implement`
-> are all dropped in favor of it. These two skills are **authored in superpowers' style, not
-> copied** — see the license note in §9.
+> are all skipped in favor of it. Both are **original works, nothing copied** — see §9.
 
 ## 5. Target architecture — the pipeline
 
@@ -115,7 +120,7 @@ substrates:
 | **3 · Build & execute** | `tdd`, `diagnosing-bugs`, `code-review`, `executing-plans` (authored, superpowers-style) | `/implement` |
 | **3.5 · Harden tests** | `conducting-test-hardening`, `auditing-test-gaps`, `verifying-test-integrity`, `writing-tests-from-brief` (verity) | — (session-start hook) |
 | **4 · Document** | `clarifying-docblocks`, `rewriting-docblock-prose`, `verifying-docblock-claims` (vernacular) | `/vernacular` |
-| **Cross-cutting** | `wizard`, `research`, `resolving-merge-conflicts`, `handoff`, `to-questionnaire`, `wait-what` | `/wizard`, `/handoff`, `/to-questionnaire`, `/wait-what` |
+| **Cross-cutting** | `wizard`, `research`, `resolving-merge-conflicts`, `handoff`, `to-signal`, `wait-what` | `/wizard`, `/handoff`, `/to-signal`, `/wait-what` |
 
 Shared knowledge layer across phases 2–4: `CONTEXT.md` + `docs/adr/`, seeded and maintained by
 `domain-modeling`, read (never required) by `tdd`, `code-review`, `codebase-design`,
@@ -123,9 +128,9 @@ Shared knowledge layer across phases 2–4: `CONTEXT.md` + `docs/adr/`, seeded a
 
 Unit count: ~23 skills (signal 4 + verity 4 + vernacular 3 + Matt engineering 10 + 2 authored
 superpowers-style: `writing-plans`, `executing-plans`) + 3 productivity commands (handoff,
-to-questionnaire, wait-what — realized as pure commands, see §5.2). Commands total: 8
+to-signal, wait-what — realized as pure commands, see §5.2). Commands total: 8
 (`/signal`, `/vernacular`, `/improve-codebase-architecture`, `/implement`, `/wizard`,
-`/handoff`, `/to-questionnaire`, `/wait-what`). Hook: 1 (verity session-start).
+`/handoff`, `/to-signal`, `/wait-what`). Hook: 1 (verity session-start).
 
 ### 5.1 File-artifact conventions
 
@@ -177,7 +182,7 @@ Two ways a user-invoked (D7) capability is realized, chosen by shape:
   skill dispatches it. Applies to `signal`, `vernacular`, `improve-codebase-architecture`, and
   `executing-plans` (→ `/implement`). The `/command` is a few lines that invoke the skill.
 - **Pure `commands/<name>.md`** — when the capability is a self-contained single-shot with no
-  subfiles and nothing dispatches it. Applies to `handoff`, `to-questionnaire`, `wait-what`.
+  subfiles and nothing dispatches it. Applies to `handoff`, `to-signal`, `wait-what`.
   The whole workflow lives in the command file; no skill entry.
 
 ### 5.3 Run context (the `<run>` key)
@@ -200,6 +205,38 @@ otherwise invoked independently:
   and human-facing, Tier-2 is gitignored runtime scratch.
 - **New shared mechanism** — see gap G7. The run pointer is the one piece of cross-phase state
   this plugin introduces; every absorbed skill must read/create it the same way.
+
+### 5.4 Naming (artisanal theme)
+
+The marketplace's existing skills — `signal`, `verity`, `vernacular` — are evocative, mostly
+single, Latinate quality-nouns. New skills adopt that register **where it makes sense**, so the
+plugin reads as one handcrafted set, not an assembled toolbox. Two guards: keep a conventional
+name when a themed one would hurt discoverability (`tdd`, `code-review`); the themed word is the
+skill *id*, while a plain descriptor lives in the skill's own `description`.
+
+Proposed map (author to confirm or replace — the implementation plan uses the confirmed set):
+
+| Capability | Proposed name | Why |
+|---|---|---|
+| domain-modeling | **lexicon** | owns `CONTEXT.md` — the project's vocabulary |
+| codebase-design | **profundity** | deep-module vocabulary (depth, leverage, seams) |
+| improve-codebase-architecture | **renovation** (`/renovate`) | finds shallow modules and deepens them |
+| prototype | **maquette** | a small throwaway model |
+| writing-plans | **prospectus** | a document laying out the planned work |
+| executing-plans | **cadence** (`/implement`) | disciplined execution rhythm |
+| diagnosing-bugs | **etiology** | the study of causes |
+| research | **provenance** | primary-source discipline |
+| resolving-merge-conflicts | **confluence** | reconciling streams into one |
+| wizard | **cicerone** (`/cicerone`) | a guide who conducts a human through steps |
+| handoff | **dossier** (`/dossier`) | a file handed to the next session |
+| wait-what | **gloss** (`/gloss`) | a plain-language restatement |
+| to-signal | `to-signal` | already themed (feeds `signal`) |
+| tdd | `tdd` | strong convention — keep |
+| code-review | `code-review` | strong convention — keep |
+
+signal/verity/vernacular and their internal sub-skills keep their current names. Elsewhere in
+this spec, capabilities are referred to by their functional names for clarity; §5.4 is the
+authority on the shipped skill id.
 
 ## 6. Adaptation notes, per source
 
@@ -225,19 +262,22 @@ otherwise invoked independently:
   `conducting-test-hardening`" reminder — update the skill reference to the new namespace and
   confirm the hook still fires.
 
-### 6.2 Ported Matt skills (adapt + attribute)
+### 6.2 Original skills, inspired by Matt's (§9)
 
-- **codebase-design** — copy `SKILL.md` + `DEEPENING.md` + `DESIGN-IT-TWICE.md`. Minimal edits.
-  Add attribution header. Foundation vocabulary; port first.
-- **domain-modeling** — copy `SKILL.md`. Locate and port the referenced `CONTEXT-FORMAT.md` and
-  `ADR-FORMAT.md` templates (their source path is not yet confirmed — a fetch task for
-  implementation, see §10 gap G3). Define the boundary vs `signal`: `signal` explores *what to
+Each bullet names the inspiration and the pieces to build. Every file is **authored fresh** in
+dashworthy voice — original text and structure, nothing copied (§9). "author `SKILL.md` + `X.md`"
+means write dashworthy's own SKILL and companion files covering the same technique.
+
+- **codebase-design** — author `SKILL.md` + `DEEPENING.md` + `DESIGN-IT-TWICE.md` (deep-module
+  vocabulary). Foundation for the design phase; build first.
+- **domain-modeling** — author `SKILL.md` + dashworthy `CONTEXT-FORMAT.md` / `ADR-FORMAT.md`
+  templates (original; see G3). Define the boundary vs `signal`: `signal` explores *what to
   build*; `domain-modeling` crystallizes *how we name it* and owns `CONTEXT.md`.
-- **tdd** — copy `SKILL.md` + `tests.md` + `mocking.md`. Keep the optional `CONTEXT.md`
+- **tdd** — author `SKILL.md` + `tests.md` + `mocking.md`. Keep the optional `CONTEXT.md`
   reference. Document the boundary vs verity: `tdd` is the red-green build loop *during*
   implementation; verity is diff-scoped hardening *after*. They compose.
-- **diagnosing-bugs** — copy `SKILL.md` + `scripts/hitl-loop.template.sh`. Clean; no tracker.
-- **code-review** — copy `SKILL.md`. **Rewire the spec source**: replace the
+- **diagnosing-bugs** — author `SKILL.md` + `scripts/hitl-loop.template.sh`. Clean; no tracker.
+- **code-review** — author `SKILL.md`. **Rewire the spec source**: replace the
   `docs/agents/issue-tracker.md` lookup + "run `/setup-matt-pocock-skills`" prompt with
   file-based spec discovery (a `signal` brief in `docs/dashworthy/engineering/specs/`, or a
   user-supplied path — see §5.1). Keep the
@@ -245,23 +285,23 @@ otherwise invoked independently:
   user's separately-installed review plugins (different marketplaces; no conflict, but the
   `code-review` name will appear twice in the skill list during the superpowers-removal
   transition — acceptable).
-- **improve-codebase-architecture** — copy `SKILL.md` + `HTML-REPORT.md`. Convert to a
+- **improve-codebase-architecture** — author `SKILL.md` + `HTML-REPORT.md`. Convert to a
   `/improve-codebase-architecture` command (it is `disable-model-invocation: true`). **Sever the
   `grill-with-docs` dependency**: replace the grilling loop with invocations of `codebase-design`
   (interface exploration) and `domain-modeling` (CONTEXT.md/ADR updates). Keep the self-contained
   HTML report (Tailwind + Mermaid via CDN, written to a temp dir).
-- **prototype** — copy `SKILL.md` + `LOGIC.md` + `UI.md`. Neutralize tracker references:
+- **prototype** — author `SKILL.md` + `LOGIC.md` + `UI.md`. Neutralize tracker references:
   "document the validated decision in the issue" → "document it in the brief/spec" (file-based).
-- **wizard** — copy `SKILL.md` + `template.sh` (into `scripts/wizard-template.sh`). Add a
+- **wizard** — author `SKILL.md` + `template.sh` (into `scripts/wizard-template.sh`). Add a
   `/wizard` command that invokes the skill. Note the `gh` CLI runtime dependency.
-- **research** — copy `SKILL.md`. Background-agent dispatch; writes a cited Markdown file
+- **research** — author `SKILL.md`. Background-agent dispatch; writes a cited Markdown file
   following repo conventions. Clean.
-- **resolving-merge-conflicts** — copy `SKILL.md`. git-only; clean.
+- **resolving-merge-conflicts** — author `SKILL.md`. git-only; clean.
 
-### 6.3 Ported Matt productivity skills (realize as pure commands, §5.2)
+### 6.3 Productivity commands (original; realized as pure commands, §5.2)
 
-Source category is `skills/productivity/` (not `engineering/`); attribute the same way (§9).
-Each is `disable-model-invocation: true` upstream → a `commands/<name>.md` here.
+Three original commands, inspired by Matt's `skills/productivity/` (§9). Each is user-invoked,
+so a pure `commands/<name>.md` (§5.2).
 
 - **handoff → `/handoff`** — compact the conversation into a handoff document for a successor
   session. Keep the `argument-hint` ("What will the next session be used for?"). Keep writing to
@@ -269,18 +309,18 @@ Each is `disable-model-invocation: true` upstream → a `commands/<name>.md` her
   the "suggested skills" section — but update those suggestions to reference `engineering:`
   skills. Keep secret redaction. Reference existing artifacts under
   `docs/dashworthy/engineering/specs|plans/`, `CONTEXT.md`, `docs/adr/` rather than duplicating.
-- **to-questionnaire → `/to-questionnaire`** — turn an unanswerable decision into a questionnaire
-  for someone else. Keep writing `to-questionnaire-<slug>.md` to the current directory. Note the
-  natural pairing with `signal`: when discovery surfaces a question the user cannot answer, this
-  externalizes it.
+- **to-signal → `/to-signal`** — turn a decision you can't answer into a questionnaire for
+  someone else; writes `to-signal-<slug>.md` in the current directory. Named for its pairing with
+  `signal`: when discovery surfaces a question the user cannot answer, `to-signal` externalizes
+  it and the answers feed back into discovery.
 - **wait-what → `/wait-what`** — comms repair. Reads `CONTEXT.md`/`CONTEXT-MAP.md` (our adopted
   substrate, D5), writes nothing. Keep the ASD-STE100 Simplified-Technical-English framing.
 
-### 6.4 Authored superpowers-style planning + execution (not ported)
+### 6.4 Authored planning + execution (superpowers as inspiration)
 
 Per the user's directive ("for planning and implement, follow more of the superpowers style"),
-these two are **authored fresh in superpowers' style**, not copied from any repo (license note,
-§9). They replace Matt's dropped `to-spec`/`to-tickets`/`wayfinder`/`implement`.
+these two are **authored fresh, inspired by superpowers** — original text and structure, nothing
+copied (§9). They replace Matt's skipped `to-spec`/`to-tickets`/`wayfinder`/`implement`.
 
 - **writing-plans** (Phase 2.5, model-invoked). Turns a spec/brief in
   `docs/dashworthy/engineering/specs/` into an ordered implementation plan written to
@@ -302,7 +342,6 @@ these two are **authored fresh in superpowers' style**, not copied from any repo
 engineering/
 ├── .claude-plugin/plugin.json
 ├── README.md                         pipeline overview + process diagram + non-guarantees
-├── NOTICE                            MIT attribution to Matt Pocock for ported skills
 ├── commands/
 │   ├── signal.md
 │   ├── vernacular.md
@@ -310,7 +349,7 @@ engineering/
 │   ├── implement.md                  wrapper → executing-plans
 │   ├── wizard.md
 │   ├── handoff.md                    productivity (pure command, §5.2)
-│   ├── to-questionnaire.md           productivity (pure command, §5.2)
+│   ├── to-signal.md           productivity (pure command, §5.2)
 │   └── wait-what.md                  productivity (pure command, §5.2)
 ├── hooks/
 │   ├── hooks.json
@@ -364,19 +403,31 @@ not appear in the plugin directory above.
 - Delete the old top-level `signal/`, `verity/`, `vernacular/` directories once their contents
   are absorbed and verified.
 
-## 9. Licensing & attribution
+## 9. Originality (this is entirely dashworthy's own work)
 
-- Repo stays MIT (compatible with Matt's MIT).
-- Add a top-level `engineering/NOTICE` crediting Matt Pocock (MIT © 2026) for the ported skills,
-  listing which skills were derived from his repo — from both `skills/engineering/` and
-  `skills/productivity/`.
-- Each ported skill carries a short attribution line (frontmatter comment or a note near the
-  top) pointing to the upstream source.
-- The dashworthy-original skills (signal/verity/vernacular) need no such line.
-- **`writing-plans` / `executing-plans` are authored fresh in superpowers' *style*, not copied.**
-  If any `superpowers` text is reused verbatim, check its license first and attribute
-  accordingly; the intent is an independent implementation of the same approach, which needs no
-  attribution. Note this provenance in the `NOTICE` for clarity.
+**The goal is that every skill here is dashworthy's own.** Matt Pocock's skills and
+`superpowers` are **inspiration** — reference points for how others solved the same problem —
+not sources to be copied. What is protectable by copyright is *expression*, not the underlying
+idea, method, or workflow; so dashworthy re-derives the method and writes it fresh.
+
+- Repo stays MIT.
+- **No attribution, no NOTICE, no credit lines.** Because nothing is copied, no MIT notice is
+  owed and none is carried. There is no `engineering/NOTICE`.
+- **Originality bar (what makes that sound):** each skill is a genuine independent expression —
+  original text, original section structure, dashworthy voice and conventions. Not a paraphrase
+  of Matt's wording, not a near-copy of his layout, not a reskinned superpowers skill. Any draft
+  that would read as derivative of a source's text is rewritten until it does not. Code and
+  templates (wizard/HITL scripts, HTML report, etc.) are written from scratch, not lifted.
+- This applies uniformly: the design/build skills (Matt as inspiration), `writing-plans` /
+  `executing-plans` (superpowers as inspiration), and the productivity commands.
+- signal/verity/vernacular are already dashworthy-original; they simply move in.
+- **These diverge over time.** The first cut captures the technique in dashworthy's voice; from
+  there the skills are progressively modified and maintained to match the author's specific
+  needs, drifting further from any inspiration with each revision. They are owned, living works,
+  not a snapshot of someone else's.
+- The references to Matt's and superpowers' skills in *this design doc* are provenance notes for
+  the reader — they name what inspired each capability. They are internal to the spec and are
+  **not** carried into the shipped plugin.
 
 ## 10. Non-guarantees (house style)
 
@@ -395,10 +446,10 @@ This plugin explicitly does **not**:
 | # | Gap | Disposition |
 |---|---|---|
 | G1 | ~~Planning gap.~~ **Resolved in this spec.** Authored superpowers-style `writing-plans` + `executing-plans` (§6.4) close the brief→plan→execute path; plans land in `docs/dashworthy/engineering/plans/`. | Build here, not deferred. |
-| G2 | **Connective tissue.** worktrees, finishing-a-branch, verification-before-completion, dispatching-parallel-agents, writing-skills, using-superpowers have no equivalent in Matt's set or dashworthy. | **Follow-up spec.** Some may be portable from `superpowers` itself — needs a license check on the `superpowers` source before copying. |
-| G3 | **CONTEXT/ADR templates.** `domain-modeling` references `CONTEXT-FORMAT.md`/`ADR-FORMAT.md`; their upstream source path is unconfirmed. | Implementation task: locate in Matt's repo (likely under `setup-matt-pocock-skills/`) and port, or author dashworthy versions. |
+| G2 | **Connective tissue.** worktrees, finishing-a-branch, verification-before-completion, dispatching-parallel-agents, writing-skills, using-superpowers have no equivalent in Matt's set or dashworthy. | **Follow-up spec.** Authored original, inspired by superpowers' approach (§9) — no copying. |
+| G3 | **CONTEXT/ADR templates.** `domain-modeling` needs `CONTEXT-FORMAT.md`/`ADR-FORMAT.md` format templates. | Author original dashworthy templates; the CONTEXT.md-glossary + lightweight-ADR pattern is a well-known convention, so no source needed. |
 | G4 | **`grill-with-docs` removal.** `improve-codebase-architecture` leans on it. | Rewire to `codebase-design` + `domain-modeling` (§6.2). Verify the loop still terminates sensibly. |
-| G5 | **Transition-period name collisions.** While `superpowers` is still installed, some ported skills (tdd↔test-driven-development, code-review↔requesting-code-review) will appear alongside their `superpowers` counterparts. | Acceptable during migration; resolves when `superpowers` is removed. Document in README. |
+| G5 | **Transition-period name overlap.** While `superpowers` is still installed, some authored skills (`engineering:tdd`, `engineering:code-review`, `engineering:writing-plans`/`executing-plans`) sit alongside their `superpowers` counterparts (test-driven-development, requesting-code-review, writing-plans/executing-plans). | Namespacing keeps them distinct; the duplication resolves when `superpowers` is removed. Note in README. |
 | G6 | ~~`implement` stranding.~~ **Resolved.** Superseded by authored `writing-plans` + `executing-plans` (§4 note, §6.4). | Build here, not deferred. |
 | G7 | **Run-context mechanism (new).** Run-first Tier-2 (§5.3) introduces the shared `.engineering/.current-run` pointer — the one piece of cross-phase state. Risk: phases must read/create it identically, or a run fragments across ids. | Implementation must give every absorbed skill the same read-or-create-pointer step; add a test that two phases in one session share a `<run>`. |
 
@@ -415,8 +466,6 @@ ship here per §6.4.)
 - Removing the `superpowers` plugin itself (that happens once the follow-up spec lands and the
   replacement is proven in daily use).
 - Any change to `verity`'s or `vernacular`'s internal proof mechanics beyond re-namespacing.
-- Rewriting Matt's skill *prose* into dashworthy voice — port faithfully first; voice
-  alignment is a later, optional pass.
 - **`git-guardrails-claude-code` and `setup-pre-commit`** (Matt's `skills/misc/`). These are
   repo-guardrail / hygiene tooling, not SDLC-pipeline phases: git-guardrails is a Claude-Code
   PreToolUse hook + `settings.json` entry that blocks destructive git ops; setup-pre-commit
@@ -426,7 +475,7 @@ ship here per §6.4.)
 
 ## 13. Build sequence (input to writing-plans)
 
-1. Scaffold `engineering/` — `plugin.json`, `README.md` skeleton, `NOTICE`. Add `.engineering/`
+1. Scaffold `engineering/` — `plugin.json`, `README.md` skeleton. Add `.engineering/`
    to `.gitignore` (Tier-2 root). Establish the run-context convention doc (§5.3).
 2. Absorb `signal` — move + re-namespace; write `brief.md` to `docs/dashworthy/engineering/specs/`
    (Tier-1); move run scaffolding to `.engineering/<run>/signal/` and have signal create the
@@ -437,21 +486,21 @@ ship here per §6.4.)
 4. Absorb `verity` — move skills/hooks/references + re-namespace; redirect `.verity/*` →
    `.engineering/<run>/verity/`; read/create the run pointer; verify the session-start hook fires
    and points at the new `conducting-test-hardening`.
-5. Port `codebase-design` (foundation vocabulary) with attribution.
-6. Port `domain-modeling` + CONTEXT/ADR templates (resolve G3).
-7. Port `tdd`, `diagnosing-bugs`, `code-review` — rewire `code-review` spec source to
+5. Author `codebase-design` (deep-module vocabulary) — the design-phase foundation.
+6. Author `domain-modeling` + dashworthy `CONTEXT`/`ADR` format templates (resolve G3).
+7. Author `tdd`, `diagnosing-bugs`, `code-review` — `code-review` reads its spec source from
    `docs/dashworthy/engineering/specs/` (§6.2).
-8. Port `improve-codebase-architecture` as a command — sever `grill-with-docs` (G4).
-9. **Author** `writing-plans` (→ `docs/.../plans/`) and `executing-plans` (+ `/implement`,
-   working state under `.engineering/<run>/implement/`) in superpowers style (§6.4).
-10. Port `prototype` (neutralize tracker), `research`, `resolving-merge-conflicts`, `wizard`
-    (+ `/wizard`).
-11. Port the three productivity commands as pure `commands/*.md` (§5.2, §6.3): `/handoff`,
-    `/to-questionnaire`, `/wait-what`.
+8. Author `improve-codebase-architecture` as a command — no grilling dependency; it leans on
+   `codebase-design` + `domain-modeling` (G4).
+9. Author `writing-plans` (→ `docs/.../plans/`) and `executing-plans` (+ `/implement`,
+   working state under `.engineering/<run>/implement/`), inspired by superpowers (§6.4).
+10. Author `prototype`, `research`, `resolving-merge-conflicts`, `wizard` (+ `/wizard`).
+11. Author the three productivity commands as pure `commands/*.md` (§5.2, §6.3): `/handoff`,
+    `/to-signal`, `/wait-what`.
 12. Rewrite `marketplace.json` (single entry) + root `README.md` (deprecation redirect +
     pipeline overview + non-guarantees).
 13. Delete absorbed top-level `signal/`, `verity/`, `vernacular/` dirs.
 14. Verify: every command (8) resolves; every skill frontmatter valid; hook fires; vernacular
     `tests/` pass; a run-context test shows two phases in one session share a `<run>` (G7); no
     dangling `signal:`/`verity:`/`vernacular:` refs or `.signal`/`.verity`/`.vernacular` paths;
-    `.engineering/` gitignored; NOTICE + per-skill attribution present.
+    `.engineering/` gitignored; no NOTICE / attribution anywhere (originality, §9).
