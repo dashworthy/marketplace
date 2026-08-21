@@ -136,6 +136,79 @@ wait-what — realized as pure commands, see §5.2). Commands total: 8 (`/signal
 `/wait-what`). Hook: 1 (verity session-start). This is a large plugin — the trade for it being
 a near-complete `superpowers` replacement plus the design/discovery additions.
 
+### End-to-end flow
+
+The six phases run in order; the **Foundations** wrap every phase (worktree at the start,
+verification/finishing at the end) and the **Cross-cutting** skills are invoked on demand at any
+point. Solid arrows are the phase sequence; dashed arrows are artifact reads/writes. Tier-1
+documents (yellow) are committed under `docs/dashworthy/engineering/`; the knowledge store
+(blue) is `CONTEXT.md` + `docs/adr/`; Tier-2 scratch (grey) is gitignored `.engineering/<run>/`.
+
+```mermaid
+flowchart TD
+    req(["Vague request"])
+    done(["Green, documented branch"])
+
+    subgraph PIPE["Pipeline — phases in order"]
+      direction TB
+      p1["1 · Discover<br/>/signal"]
+      p2["2 · Design<br/>/improve-codebase-architecture<br/>codebase-design · prototype"]
+      p25["2.5 · Plan<br/>writing-plans"]
+      p3["3 · Build and execute<br/>/implement<br/>tdd · diagnosing-bugs · code-review · executing-plans"]
+      p35["3.5 · Harden tests<br/>verity — session-start hook"]
+      p4["4 · Document<br/>/vernacular"]
+      p1 --> p2 --> p25 --> p3 --> p35 --> p4
+    end
+
+    req --> p1
+    p4 --> done
+
+    brief["brief / spec<br/>docs/.../specs/"]
+    plan["implementation plan<br/>docs/.../plans/"]
+    p1 -. writes .-> brief
+    brief -. reads .-> p25
+    brief -. Spec axis .-> p3
+    p25 -. writes .-> plan
+    plan -. reads .-> p3
+
+    dm["domain-modeling"]
+    ctx[("CONTEXT.md + docs/adr/")]
+    dm --> ctx
+    ctx -. read when present .-> p2
+    ctx -. read when present .-> p3
+
+    scratch[".engineering/&lt;run&gt;/ — build scratch<br/>signal · verity · vernacular · implement"]
+    PIPE -. writes per run .-> scratch
+
+    subgraph FOUND["Foundations — apply throughout"]
+      direction LR
+      f1["using-git-worktrees"]
+      f2["verification-before-completion"]
+      f3["finishing-a-development-branch"]
+      f4["dispatching-parallel-agents"]
+      f5["writing-skills"]
+      f6["using-skills"]
+    end
+    subgraph XC["Cross-cutting — invoke as needed"]
+      direction LR
+      x1["wizard"]
+      x2["research"]
+      x3["resolving-merge-conflicts"]
+      x4["handoff"]
+      x5["to-signal"]
+      x6["wait-what"]
+    end
+    FOUND -. discipline .-> PIPE
+    XC -. on demand .-> PIPE
+
+    classDef art fill:#fff5d6,stroke:#c9a227,color:#3a2f00;
+    classDef store fill:#e6f0ff,stroke:#3b6fb5,color:#0a2540;
+    classDef scratch fill:#eeeeee,stroke:#888,color:#222;
+    class brief,plan art;
+    class ctx store;
+    class scratch scratch;
+```
+
 ### 5.1 File-artifact conventions
 
 Generated files fall in **two tiers**, by durability and audience:
