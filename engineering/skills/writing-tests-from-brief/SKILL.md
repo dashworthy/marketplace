@@ -62,7 +62,7 @@ substitute for holding the rule.
 **Noticing you're about to write outside your scope is still information, not an obstacle to
 route around** — that instinct still applies, it just isn't triggered by a block anymore. If you
 find yourself reaching for a path outside the test or fixture tree, or reaching for application
-code to make a test pass, that is the tell: it almost always means the test genuinely needs
+code to make a test pass, that is the signal: it almost always means the test genuinely needs
 application code to change, which is rule 2, a breakage finding. Do not retry through Bash, do
 not take the write anyway on the theory that nothing will stop you, and do not treat the impulse
 as a puzzle to solve. Report what you found as a breakage finding and stop.

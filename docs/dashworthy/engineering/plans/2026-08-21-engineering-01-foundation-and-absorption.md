@@ -843,9 +843,18 @@ Expected: ends with `ALL FOUNDATION CHECKS PASS`
 
 Run:
 ```bash
-grep -rn "signal:\|verity:\|vernacular:\|\.signal/\|\.verity\|\.vernacular" engineering/skills engineering/commands || echo "CLEAN"
+grep -rnE '(signal|verity|vernacular):[a-z]|\.signal/|\.verity\b|\.vernacular\b' engineering/skills engineering/commands || echo "CLEAN"
 ```
 Expected: `CLEAN`
+
+This pattern is anchored to old skill-namespace IDs (`signal:conducting-discovery`,
+`verity:...`, `vernacular:...` — a lowercase letter must follow the colon) and Tier-2 path
+prefixes (`.signal/`, `.verity`, `.vernacular` as whole path segments), not a bare
+`signal:`/`verity:`/`vernacular:` substring. The broader substring form
+(`grep -rn "signal:\|verity:\|vernacular:\|\.signal/\|\.verity\|\.vernacular"`) false-positives
+on ordinary prose that happens to contain the word followed by a colon (e.g. "that is the
+signal: it almost always means...") — absorbed prose is byte-fidelity-invariant and must
+never be reworded to satisfy the sweep; the sweep pattern is what must be correct.
 
 - [ ] **Step 4: Commit**
 
