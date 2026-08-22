@@ -131,7 +131,7 @@ instead. This run's briefs live at `.engineering/<run>/verity/briefs/<n>.md`.
 Repeat the following per iteration until an exit condition is reached.
 
 - **Audit.** For every (suite, track) pair confirmed in preflight, dispatch one
-  `auditing-test-gaps` agent, in parallel, per `superpowers:dispatching-parallel-agents`. Pass
+  `auditing-test-gaps` agent, in parallel, per `engineering:dispatching-parallel-agents`. Pass
   each agent only that suite's slice: its changed files, its current report numbers, and its
   carry-forward from the previous iteration — never another suite's data, and never the raw diff
   beyond what that one suite owns.
@@ -339,7 +339,7 @@ Whichever exit is reached, report it plainly, together with:
 - Any degraded condition hit along the way (a dead auditor, a skipped suite, a stalled mutation
   run) and what it means for whether `pass` was reachable at all.
 
-Then invoke `superpowers:verification-before-completion` before reporting anything as met. There
+Then invoke `engineering:verification-before-completion` before reporting anything as met. There
 is no gate file to clear and no marker to remove — this run's briefs under `.engineering/<run>/verity/briefs/`
 are left in place as the audit trail, and the next run asks its questions fresh rather than
 reading anything back from this one.

@@ -197,7 +197,7 @@ exactly like a check that passed.
 Then say plainly: the rewrites are unstaged in the working tree, `git diff` is the review, and
 `git checkout -- .` is the undo.
 
-Invoke `superpowers:verification-before-completion` before reporting anything as done.
+Invoke `engineering:verification-before-completion` before reporting anything as done.
 
 ## Error handling
 

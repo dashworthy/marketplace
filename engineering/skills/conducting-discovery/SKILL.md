@@ -9,7 +9,7 @@ description: "[Discovery] The signal discovery conductor — interrogate require
 
 The conductor for signal's two-stage discovery pipeline: **interrogate → sequence**. It owns control flow only — sequencing, dispatch, and enforcing order. Judgment lives in the skills it invokes: `engineering:interrogating-requirements`, `engineering:expanding-scope`, and `engineering:sequencing-requirements`.
 
-It is **invoked explicitly** — by the `/signal` command, or by a direct request to "run signal" / "use the signal pipeline" on a request. It does **not** auto-intercept general "build X" requests; those go to `superpowers:brainstorming` as usual.
+It is **invoked explicitly** — by the `/signal` command, or by a direct request to "run signal" / "use the signal pipeline" on a request. It does **not** auto-intercept general "build X" requests; those go to `engineering:brainstorming` as usual.
 
 Signal produces one artifact — `brief.md` — and stops at it: no review stage, no design stage, no plan stage, no build loop of its own. The one thing that happens after is mechanical, not a stage of signal's own: once the brief is complete, the conductor hands its path to `engineering:to-spec`, which renders the committed Tier-1 spec. Rendering a finished brief into the standard spec format is not designing, planning, or building — `to-spec` does none of those either — so this delegation does not reopen any of the three doors signal keeps closed.
 
