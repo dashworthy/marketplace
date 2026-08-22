@@ -17,11 +17,45 @@ for c in signal triage vernacular improve-codebase-architecture implement wizard
 done
 
 # 3. Every skill frontmatter valid; process-tied ones carry a [Group] tag, cross-cutting ones do not.
-tagged="conducting-discovery:[Discovery] interrogating-requirements:[Discovery] expanding-scope:[Discovery] sequencing-requirements:[Discovery] to-spec:[Discovery] domain-modeling:[Discovery] triage:[Triage] brainstorming:[Design] codebase-design:[Design] improve-codebase-architecture:[Design] prototype:[Design] writing-plans:[Planning] executing-plans:[Planning] tdd:[Build] diagnosing-bugs:[Build] code-review:[Build] conducting-test-hardening:[Test hardening] auditing-test-gaps:[Test hardening] verifying-test-integrity:[Test hardening] writing-tests-from-brief:[Test hardening] clarifying-docblocks:[Docs] rewriting-docblock-prose:[Docs] verifying-docblock-claims:[Docs] using-git-worktrees:[Foundation] finishing-a-development-branch:[Foundation] verification-before-completion:[Foundation] dispatching-parallel-agents:[Foundation] writing-skills:[Foundation] using-skills:[Foundation]"
-for pair in $tagged; do
+# One "name:[Group]" per line: a tag containing a space ("[Test hardening]") would be word-split by
+# `for pair in $list`, producing bogus entries. The heredoc feeds the loop without a pipe, so it runs
+# in the current shell and `fail=1` set inside survives. name/tag split on the first colon.
+tagged="conducting-discovery:[Discovery]
+interrogating-requirements:[Discovery]
+expanding-scope:[Discovery]
+sequencing-requirements:[Discovery]
+to-spec:[Discovery]
+domain-modeling:[Discovery]
+triage:[Triage]
+brainstorming:[Design]
+codebase-design:[Design]
+improve-codebase-architecture:[Design]
+prototype:[Design]
+writing-plans:[Planning]
+executing-plans:[Planning]
+tdd:[Build]
+diagnosing-bugs:[Build]
+code-review:[Build]
+conducting-test-hardening:[Test hardening]
+auditing-test-gaps:[Test hardening]
+verifying-test-integrity:[Test hardening]
+writing-tests-from-brief:[Test hardening]
+clarifying-docblocks:[Docs]
+rewriting-docblock-prose:[Docs]
+verifying-docblock-claims:[Docs]
+using-git-worktrees:[Foundation]
+finishing-a-development-branch:[Foundation]
+verification-before-completion:[Foundation]
+dispatching-parallel-agents:[Foundation]
+writing-skills:[Foundation]
+using-skills:[Foundation]"
+while IFS= read -r pair; do
+  [ -n "$pair" ] || continue
   name=${pair%%:*}; tag=${pair#*:}
   sh "$d/frontmatter.sh" "$eng/skills/$name" "$tag" >/dev/null || { echo "FAIL: $name frontmatter/tag"; fail=1; }
-done
+done <<EOF
+$tagged
+EOF
 for name in wizard research resolving-merge-conflicts; do
   sh "$d/frontmatter.sh" "$eng/skills/$name" >/dev/null || { echo "FAIL: $name frontmatter"; fail=1; }
   python3 -c "import re,sys;t=open(sys.argv[1]).read();m=re.search(r'^description:\s*\"?(.)',t,re.M);assert m and m.group(1)!='[',sys.argv[1]" "$eng/skills/$name/SKILL.md" || { echo "FAIL: $name must not be tagged"; fail=1; }
@@ -58,8 +92,10 @@ if grep -rnE '(signal|verity|vernacular|superpowers):[a-z]|\.signal/|\.verity\b|
 grep -qxF '.engineering/' "$root/.gitignore" || { echo "FAIL: .engineering not gitignored"; fail=1; }
 
 # 10. No NOTICE / attribution anywhere in the plugin.
+# --exclude-dir=tests: these detection scripts hold the very phrases as grep patterns and would
+# otherwise self-match. Plugin content (skills/commands/hooks/scripts/README) is what must stay clean.
 test ! -f "$eng/NOTICE" || { echo "FAIL: NOTICE file exists"; fail=1; }
-if grep -rIn "Matt Pocock\|mattpocock\|reproduced from\|copied from superpowers" "$eng" 2>/dev/null; then echo "FAIL: attribution leak"; fail=1; fi
+if grep -rIn --exclude-dir=tests "Matt Pocock\|mattpocock\|reproduced from\|copied from superpowers" "$eng" 2>/dev/null; then echo "FAIL: attribution leak"; fail=1; fi
 
 # 11. Old directories are gone.
 for old in signal verity vernacular; do test ! -d "$root/$old" || { echo "FAIL: $old/ still present"; fail=1; }; done
