@@ -1,6 +1,6 @@
 ---
 name: verification-before-completion
-description: "[Foundation] Before claiming done, fixed, or passing, run the verification commands and confirm their output — evidence before assertions. Use whenever you are about to report success. Complements test-hardening (which hardens the tests themselves). Model-invoked; no command."
+description: "[Foundation] Before claiming done, fixed, or passing, run the verification commands and confirm their output — show the proof, do not just assert the result. Use whenever you are about to report success. Complements test-hardening (which hardens the tests themselves). Model-invoked; no command."
 ---
 
 # Verification Before Completion

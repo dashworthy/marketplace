@@ -80,13 +80,16 @@ grep -rq "to-spec" "$eng/skills/triage" || { echo "FAIL: triage must reach to-sp
 grep -q "conducting-test-hardening" "$eng/skills/writing-plans/SKILL.md" || { echo "FAIL: writing-plans must bake hardening"; fail=1; }
 grep -q "conducting-test-hardening" "$eng/skills/finishing-a-development-branch/SKILL.md" || { echo "FAIL: finish-time hardening net missing"; fail=1; }
 
-# 8. No dangling cross-plugin namespaces or Tier-2 paths anywhere in engineering/.
+# 8. No dangling cross-plugin namespaces or Tier-2 paths anywhere in the plugin's content.
+# Scans every content surface — skills, commands, hooks, scripts, and the plugin README; tests/ is
+# excluded deliberately (these detection scripts hold the pattern literals and would self-match, same
+# rationale as check 10).
 # Word-form namespace match only: the bare pattern "signal:" false-fails on legit prose such as
 # writing-tests-from-brief "...that is the signal: it almost always means...". Requiring a lowercase
 # letter after the colon matches real namespaced refs (signal:foo) but not sentence punctuation.
 # Also asserts the superpowers: transition is complete (all repointed to engineering:), while leaving
 # writing-skills' teaching counter-example "superpowers:<skill-name>" (colon + "<") untouched.
-if grep -rnE '(signal|verity|vernacular|superpowers):[a-z]|\.signal/|\.verity\b|\.vernacular\b' "$eng/skills" "$eng/commands"; then echo "FAIL: dangling refs"; fail=1; fi
+if grep -rnE '(signal|verity|vernacular|superpowers):[a-z]|\.signal/|\.verity\b|\.vernacular\b' "$eng/skills" "$eng/commands" "$eng/hooks" "$eng/scripts" "$eng/README.md"; then echo "FAIL: dangling refs"; fail=1; fi
 
 # 9. .engineering/ gitignored.
 grep -qxF '.engineering/' "$root/.gitignore" || { echo "FAIL: .engineering not gitignored"; fail=1; }
