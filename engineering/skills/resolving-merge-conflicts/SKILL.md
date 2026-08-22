@@ -36,10 +36,15 @@ Once both sides' intent is understood, the resolution that keeps both is the def
 exception. Two changes usually address different concerns that happened to share a location —
 one fixed a bug in this function, the other renamed a parameter it uses — and a resolution
 that quietly drops one of them to make the markers go away is a regression wearing a
-successful merge's clothes. Never blind-accept a side: `git checkout --ours` / `--theirs`, or
-`git merge -X ours` / `-X theirs`, resolve the marker text without ever answering whether the
-discarded side's change is still needed. They are a closing move for a hunk you have already
-read and confirmed is genuinely redundant — never a shortcut for a hunk you haven't read yet.
+successful merge's clothes. Never blind-accept a side, and know what each command actually touches before reaching for
+it. `git checkout --ours` / `--theirs -- <path>` resolves the *whole file* to one side —
+every conflicting hunk in it, including any you haven't read yet, not just the hunk in front
+of you — so it is safe only once every conflicting hunk in that file has been read and
+confirmed redundant, never as a shortcut for a single hunk you've vetted. `git merge -X ours`
+/ `-X theirs` is the one that acts per hunk, biasing automerge hunk by hunk during the merge
+itself, but the same rule still holds at that finer grain: a hunk only gets resolved this way
+once it's already been read and confirmed redundant. Neither command is a way to skip reading
+a hunk; both are a closing move for reading already done, never a substitute for it.
 If, having read both sides, one truly does supersede the other — same intent, a later and
 better attempt — write that down as the reason for the resolution; it is a conclusion you
 reached, not a default you reached for.
