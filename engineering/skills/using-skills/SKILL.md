@@ -70,8 +70,8 @@ These are the exact shapes the temptation above tends to wear. Treat any of them
 your own reasoning as the signal to stop and check, not as a legitimate reason to skip the
 check:
 
-- **"This is just a simple question."** Simplicity is not evidence that no skill owns it — it's
-  evidence the answer will be quick once the right skill, if any, is found.
+- **"This one's obviously too small to need a skill."** Smallness is not evidence that no skill
+  owns it — it's evidence the answer will be quick once the right skill, if any, is found.
 - **"Let me explore first, then work out the skill question."** Exploration is action. If a
   skill owns how this codebase should be explored for this kind of request, opening files before
   checking has already spent the move that skill existed to shape.
