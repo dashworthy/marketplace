@@ -7,36 +7,6 @@
   },
   "plugins": [
     {
-      "name": "signal",
-      "description": "Discovery pipeline: interrogate requirements, then sequence them into a dependency-ordered brief for handoff.",
-      "version": "0.2.0",
-      "source": "./signal",
-      "author": {
-        "name": "Andrew Leach",
-        "email": "7387639+andyleach@users.noreply.github.com"
-      }
-    },
-    {
-      "name": "verity",
-      "description": "Diff-scoped test hardening: audits a branch diff for weakly-tested behaviour, writes tests and only tests, and verifies those tests actually assert what they claim.",
-      "version": "0.1.0",
-      "source": "./verity",
-      "author": {
-        "name": "Andrew Leach",
-        "email": "7387639+andyleach@users.noreply.github.com"
-      }
-    },
-    {
-      "name": "vernacular",
-      "description": "Diff-scoped documentation hardening: rewrites a branch's docblock prose into plain language in place, proving that executable code and structured annotations came out byte-identical.",
-      "version": "0.1.0",
-      "source": "./vernacular",
-      "author": {
-        "name": "Andrew Leach",
-        "email": "7387639+andyleach@users.noreply.github.com"
-      }
-    },
-    {
       "name": "engineering",
       "description": "Full software-development pipeline: discovery/triage, design dialogue, spec, plan, TDD build, test hardening, docs hardening. File-based, no tracker.",
       "version": "0.1.0",
