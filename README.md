@@ -1,8 +1,8 @@
 # Dashworthy Development Skills
 
-A Claude Code **plugin marketplace** — a growing collection of independently-installable plugins, published from this one repo.
-
-Each plugin here is self-contained. They share an author and a marketplace, not a dependency: install one, install several, or install none. Adding the marketplace does not install anything.
+A Claude Code **plugin marketplace** published from this one repo. It now carries a
+single plugin: **engineering**, a complete software-development pipeline that takes a
+request from a vague ask through to a green, documented branch.
 
 ## Add the marketplace
 
@@ -10,7 +10,51 @@ Each plugin here is self-contained. They share an author and a marketplace, not 
 /plugin marketplace add https://github.com/dashworthy/marketplace
 ```
 
-Then install whichever plugins you want:
+## Install
+
+```
+/plugin install engineering@dashworthy
+```
+
+That's the only install command this marketplace needs — engineering carries
+everything, so there's nothing else to add on top of it.
+
+## Pipeline overview
+
+Work enters through one of two doors. A feature or a vague request starts at
+**discover**; a reported defect starts at **triage**, which isolates the problem before
+deciding how far it needs to go. Both doors open onto the same **design dialogue**
+(`brainstorming`): a forced comparison of two or three approaches, worked through
+section by section, that will not let anything downstream start until you've
+explicitly approved a direction. Approval hands off to **`to-spec`**, a single writer
+that turns the approved design into one spec document.
+
+From the spec, the rest of the pipeline runs in a fixed order: **plan** the work,
+**build** it test-first, **harden** the tests against the gaps a first pass tends to
+leave behind, and **document** whatever prose the branch touched. Each phase reads what
+the phase before it produced; none of them re-decide what an earlier phase already
+settled.
+
+### What it doesn't do
+
+- **No issue tracker.** Every artifact is a file. Even triage, which exists specifically
+  to isolate a reported problem, logs its findings to a disposable run directory rather
+  than opening a ticket anywhere.
+- **CONTEXT.md and ADRs are optional.** The design and build phases read them when
+  they exist and carry on fine when they don't. Nothing in the pipeline demands you
+  maintain either.
+- **Scratch output is disposable.** Everything a run produces along the way lives under
+  a gitignored, per-run scratch directory. It's safe to delete; nothing durable depends
+  on it surviving.
+- **Skills stay flat.** The plugin doesn't nest its skills into subdirectories to show
+  relatedness — grouping comes from naming and a README index, not folders.
+
+## Deprecation
+
+`signal`, `verity`, and `vernacular` haven't disappeared — they're now phases inside
+`engineering` rather than plugins you install on their own: discovery, test hardening,
+and documentation hardening, in that order. The three separate install commands are
+deprecated:
 
 ```
 /plugin install signal@dashworthy
@@ -18,34 +62,20 @@ Then install whichever plugins you want:
 /plugin install vernacular@dashworthy
 ```
 
-## Plugins
+Use `/plugin install engineering@dashworthy` instead. If you already have one of the
+three installed, it keeps running exactly as before — nothing breaks underfoot. The old
+name simply stops being the way forward the next time you reinstall or update it; at
+that point, reach for `engineering@dashworthy`.
 
-| Plugin | What it does | How you invoke it |
-|---|---|---|
-| **[signal](signal/README.md)** `0.1.0` | Discovery. Interrogates a vague request into hard requirements, surfaces what you didn't think to ask for, and orders the result into a brief where nothing appears before what it depends on. It produces a brief and stops — it does not design, plan, or build. | `/signal <request>` |
-| **[verity](verity/README.md)** `0.1.0` | Diff-scoped test hardening. Audits a branch diff for weakly-tested behaviour, writes tests and only tests to close the gaps, and verifies those tests actually assert what they claim — looping until thresholds are met or it runs out of road. Never modifies application code. | No command — invoke the `conducting-test-hardening` skill, or let it fire when implementation work finishes |
-| **[vernacular](vernacular/README.md)** `0.1.0` | Diff-scoped documentation hardening. Rewrites the docblock prose your branch touched into plain language, in place, drawing an ASCII diagram where the thing has a shape. Proves that executable code and structured annotations came out byte-identical, and halts if they did not. Writes no `@param`, `@return`, or any other tag. | `/vernacular [ref]` |
+## Transition note
 
-They are not sequential stages of one tool, but they do sit at opposite ends of the same piece of work: signal runs before anything is built, when the question is *what are we actually making?* Verity runs after, when the question is *would anything notice if this broke?* Neither knows about the other, and neither needs the other installed.
-
-Each plugin's own README carries its process-flow diagram and — in both cases — an explicit account of what it does **not** guarantee: [signal](signal/README.md#the-two-stages), [verity](verity/README.md#how-a-run-flows).
-
-
-
-## Repository layout
-
-```
-marketplace/
-├── .claude-plugin/marketplace.json   the dashworthy marketplace
-├── signal/                           one plugin
-│   └── .claude-plugin/plugin.json
-├── verity/                           another
-│   └── .claude-plugin/plugin.json
-└── vernacular/                       and another
-    └── .claude-plugin/plugin.json
-```
-
-A new plugin is a new top-level directory with its own `.claude-plugin/plugin.json`, plus an entry in the marketplace manifest. Nothing inside the existing plugins changes when one is added.
+For as long as `superpowers` is also installed alongside this marketplace, a handful of
+`engineering` skill names will look like they shadow a `superpowers` skill of the same
+short name — `engineering:tdd` next to `superpowers:tdd`, `engineering:brainstorming`
+next to `superpowers:brainstorming`, and a few others. They aren't the same skill; each
+`engineering` one is written and maintained independently. Every skill reference is
+namespaced by its plugin, so the two families never actually collide — the apparent
+overlap is cosmetic, and it goes away entirely once `superpowers` is removed.
 
 ## License
 
