@@ -1,8 +1,0 @@
-{
-  "name": "vernacular",
-  "description": "Diff-scoped documentation hardening: rewrites a branch's docblock prose into plain language, in place, and proves mechanically that executable code and structured annotations came out byte-identical. Writes no @param, @return or any other tag.",
-  "version": "0.1.0",
-  "author": { "name": "Andrew Leach", "email": "7387639+andyleach@users.noreply.github.com" },
-  "license": "MIT",
-  "keywords": ["documentation", "docblocks", "phpdoc", "jsdoc", "docstrings", "readability", "subagents"]
-}
