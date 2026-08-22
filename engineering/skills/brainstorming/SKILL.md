@@ -25,8 +25,7 @@ This skill starts from whichever entrance opened the work:
 
 - a **signal** brief, `.engineering/<run>/signal/brief.md` — a request already
   interrogated into requirements, users, success criteria, and constraints.
-- a **triage** problem, `.engineering/<run>/triage/…` — a defect already isolated to a
-  root cause, waiting on a decision about how to fix it.
+- a **triage** problem, `.engineering/<run>/triage/…` — a defect isolated far enough to place it at a domain concept and route it here, waiting on a decision about how to fix it.
 
 One of the two is the entry ticket. Starting without either — no brief, no isolated
 problem, just a request typed straight at this skill — means the interrogation that
